@@ -1,1 +1,4 @@
-# SoftwareDesign-ScoringSystem  
+# 软设比赛-评分系统  
+
+# 更新日志  
+2021.2.24 上传至github  
