@@ -52,9 +52,8 @@ public class JoinContest extends HttpServlet {
 
                 int id = Integer.parseInt(request.getParameter("id"));
                 int userid = 1;
-                SimpleDateFormat df=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                //SimpleDateFormat df=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                 Date time = new Date();
-                String time2 = df.format(time);
 
                 // 执行 SQL 查询
                 String sql;
@@ -65,12 +64,13 @@ public class JoinContest extends HttpServlet {
 
                 while(rs.next()){
                 // 通过字段检索
-                /*String starttime = rs.getString("starttime");
-                String endtime = rs.getString("endtime");*/
+                Date starttime = rs.getTimestamp("starttime");
+                Date endtime = rs.getTimestamp("endtime");
                 int currentmembers = rs.getInt("currentmembers");
                 int maxmembers = rs.getInt("maxmembers");
+                String contestuser = rs.getString("userid");
 
-                    if(/*time >= starttime && time <= endtime && */currentmembers < maxmembers)
+                    if(time.getTime() >= starttime.getTime() && time.getTime() <= endtime.getTime() && currentmembers < maxmembers)
                     {
                         sql = "SELECT partake FROM competitor where userid=?;";
                         pstmt = conn.prepareStatement(sql);
@@ -84,11 +84,19 @@ public class JoinContest extends HttpServlet {
                                 if(Integer.parseInt(name) == id) Flag = 0;
                             }
                             if(Flag == 1){
+
                                 sql = "UPDATE contest set currentmembers=(currentmembers+1) where id=?;";
                                 pstmt = conn.prepareStatement(sql);
                                 pstmt.setInt(1,id);
-                                pstmt.executeUpdate(); 
+                                pstmt.executeUpdate();
                                 
+                                sql = "UPDATE contest set userid=? where id=?;";
+                                pstmt = conn.prepareStatement(sql);
+                                String userid2 = contestuser + Integer.toString(userid)+";";
+                                pstmt.setString(1,userid2);
+                                pstmt.setInt(2,id);
+                                pstmt.executeUpdate();                               
+
                                 sql = "UPDATE competitor set partake=? where userid=?;";
                                 pstmt = conn.prepareStatement(sql);
                                 String id2 = rs.getString("partake") + Integer.toString(id)+";";
