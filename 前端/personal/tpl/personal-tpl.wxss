@@ -1,0 +1,12 @@
+/* pages/personal/tpl/personal-tpl.wxss */
+.content{
+	border: 2px solid #d1d1d1;
+	padding: 1px 7px 10px 7px;
+	overflow: auto;
+}
+
+.content button
+{
+  position: relative;
+  left: 25%;
+}

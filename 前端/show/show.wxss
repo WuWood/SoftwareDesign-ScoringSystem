@@ -1,0 +1,15 @@
+/* pages/show/show.wxss */
+@import "tpl/show-tpl.wxss"; /*css模块化，引用模块*/
+
+.text1
+{
+  position: absolute;
+  top: 25%;
+  left: 25%;
+  justify-content:center;
+  font-size: 36px;
+  filter: drop-shadow(5px 4px 3px  #484848);
+  line-height: 1.8em;/*原始 1.6em*/
+  margin-top: 10px;/*原始 15px */
+  color: white;
+}

@@ -1,0 +1,7 @@
+<!--pages/personal/personal.wxml-->
+<import src="tpl/personal-tpl.wxml"/>
+<block wx:for="{{list}}" wx:for-item="item" wx:for-index="idx"> 
+  <!--tap事件能注册在view上，但不能注册在block、template上-->
+    <template is="showItemTpl" data="{{...item}}"></template>
+</block>  
+

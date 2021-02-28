@@ -1,0 +1,9 @@
+<!--pages/personal/tpl/personal-tpl.wxml-->
+<template name="showItemTpl"> <!--将template的内容整合成一个模块-->
+  <view class="content">  
+    <text>ID：{{id}}\n</text>
+    <text>名称：{{name}}\n</text>
+    <text>描述：{{description}}\n</text>
+  </view>
+</template>
+
