@@ -5,11 +5,8 @@ Page({
    * 页面的初始数据
    */
   data: {
-    list: [{
-      id: 0,
-      name: "",
-      description: "",
-    }],
+    list: [],
+    none: false,
   },
 
   /**
@@ -27,11 +24,28 @@ Page({
         for (var i = 0; i <= jsonRes.length - 2; i++) {
           arrayRes.push(JSON.parse(jsonRes[i]));
         }
-        that.setData({
-          list: arrayRes
-        });
+        if(res.data != ""){
+          that.setData({
+            list: arrayRes
+          });
+        }
+        else
+        {
+          that.setData(
+            {
+              list: [],
+              none:true,
+            }
+          );         
+        }
       },
       fail: function (res) {
+        that.setData(
+          {
+            list: [],
+            none:true,
+          }
+        );    
       }
     });
   },
