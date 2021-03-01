@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- 主机： 127.0.0.1
--- 生成日期： 2021-02-28 13:46:24
+-- 生成日期： 2021-03-01 05:51:41
 -- 服务器版本： 10.4.17-MariaDB
 -- PHP 版本： 8.0.1
 
@@ -20,7 +20,7 @@ SET time_zone = "+00:00";
 --
 -- 数据库： `bearcome`
 --
-CREATE DATABASE IF NOT EXISTS `bearcome` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+CREATE DATABASE IF NOT EXISTS `bearcome` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE `bearcome`;
 
 -- --------------------------------------------------------
@@ -31,8 +31,9 @@ USE `bearcome`;
 
 CREATE TABLE IF NOT EXISTS `competitor` (
   `userid` int(16) NOT NULL,
-  `partake` text NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+  `partake` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  PRIMARY KEY (`userid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- 转存表中的数据 `competitor`
@@ -48,15 +49,16 @@ REPLACE INTO `competitor` (`userid`, `partake`) VALUES
 --
 
 CREATE TABLE IF NOT EXISTS `contest` (
-  `id` int(16) NOT NULL,
-  `name` text NOT NULL,
-  `description` text NOT NULL,
+  `id` int(16) NOT NULL AUTO_INCREMENT,
+  `name` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `description` text COLLATE utf8mb4_unicode_ci NOT NULL,
   `starttime` datetime NOT NULL,
   `endtime` datetime NOT NULL,
   `maxmembers` int(16) NOT NULL,
   `currentmembers` int(16) NOT NULL,
-  `userid` text NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+  `userid` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- 转存表中的数据 `contest`
@@ -75,8 +77,9 @@ REPLACE INTO `contest` (`id`, `name`, `description`, `starttime`, `endtime`, `ma
 
 CREATE TABLE IF NOT EXISTS `examine` (
   `userid` int(16) NOT NULL,
-  `description` text NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+  `description` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  PRIMARY KEY (`userid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -86,12 +89,12 @@ CREATE TABLE IF NOT EXISTS `examine` (
 
 CREATE TABLE IF NOT EXISTS `users` (
   `userid` int(11) NOT NULL AUTO_INCREMENT,
-  `name` text NOT NULL,
-  `password` text NOT NULL,
-  `WeChatCode` text DEFAULT NULL,
+  `name` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `password` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `WeChatCode` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `level` int(11) NOT NULL,
   PRIMARY KEY (`userid`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- 转存表中的数据 `users`
