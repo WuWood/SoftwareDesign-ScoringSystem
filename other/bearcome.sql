@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- 主机： 127.0.0.1
--- 生成日期： 2021-03-01 05:51:41
+-- 生成日期： 2021-03-02 10:52:26
 -- 服务器版本： 10.4.17-MariaDB
 -- PHP 版本： 8.0.1
 
@@ -57,6 +57,8 @@ CREATE TABLE IF NOT EXISTS `contest` (
   `maxmembers` int(16) NOT NULL,
   `currentmembers` int(16) NOT NULL,
   `userid` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `jLock` tinyint(1) NOT NULL DEFAULT 0,
+  `cLock` tinyint(1) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -64,10 +66,10 @@ CREATE TABLE IF NOT EXISTS `contest` (
 -- 转存表中的数据 `contest`
 --
 
-REPLACE INTO `contest` (`id`, `name`, `description`, `starttime`, `endtime`, `maxmembers`, `currentmembers`, `userid`) VALUES
-(1, 'test', 'hello', '2021-02-21 20:39:35', '2021-02-22 20:39:35', 10, 7, ''),
-(2, 'test2', 'hey', '2021-02-23 20:40:06', '2021-02-24 20:40:06', 10, 6, ''),
-(3, '1', '1', '2021-02-25 14:38:17', '2021-07-01 14:38:17', 100, 2, '1;');
+REPLACE INTO `contest` (`id`, `name`, `description`, `starttime`, `endtime`, `maxmembers`, `currentmembers`, `userid`, `jLock`, `cLock`) VALUES
+(1, 'test', 'hello', '2021-02-21 20:39:35', '2021-02-22 20:39:35', 10, 7, '', 0, 0),
+(2, 'test2', 'hey', '2021-02-23 20:40:06', '2021-02-24 20:40:06', 10, 6, '', 0, 0),
+(3, '1', '1', '2021-02-25 14:38:17', '2021-07-01 14:38:17', 100, 2, '1;', 0, 0);
 
 -- --------------------------------------------------------
 
@@ -93,6 +95,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `password` text COLLATE utf8mb4_unicode_ci NOT NULL,
   `WeChatCode` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `level` int(11) NOT NULL,
+  `nickname` text COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`userid`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -100,8 +103,8 @@ CREATE TABLE IF NOT EXISTS `users` (
 -- 转存表中的数据 `users`
 --
 
-REPLACE INTO `users` (`userid`, `name`, `password`, `WeChatCode`, `level`) VALUES
-(1, 'test', '098f6bcd4621d373cade4e832627b4f6', '', 1);
+REPLACE INTO `users` (`userid`, `name`, `password`, `WeChatCode`, `level`, `nickname`) VALUES
+(1, 'test', '098f6bcd4621d373cade4e832627b4f6', '', 1, '');
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
