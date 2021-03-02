@@ -1,0 +1,11 @@
+/* pages/examine/request/request.wxss */
+textarea
+{
+  border: 2px solid #d1d1d1;
+}
+
+text
+{
+  display:flex;
+  justify-content:center;
+}
