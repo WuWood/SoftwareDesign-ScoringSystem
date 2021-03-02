@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- 主机： 127.0.0.1
--- 生成日期： 2021-03-02 10:52:26
+-- 生成日期： 2021-03-02 11:29:34
 -- 服务器版本： 10.4.17-MariaDB
 -- PHP 版本： 8.0.1
 
@@ -91,12 +91,13 @@ CREATE TABLE IF NOT EXISTS `examine` (
 
 CREATE TABLE IF NOT EXISTS `users` (
   `userid` int(11) NOT NULL AUTO_INCREMENT,
-  `name` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `name` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
   `password` text COLLATE utf8mb4_unicode_ci NOT NULL,
   `WeChatCode` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `level` int(11) NOT NULL,
   `nickname` text COLLATE utf8mb4_unicode_ci NOT NULL,
-  PRIMARY KEY (`userid`)
+  PRIMARY KEY (`userid`),
+  UNIQUE KEY `name` (`name`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
