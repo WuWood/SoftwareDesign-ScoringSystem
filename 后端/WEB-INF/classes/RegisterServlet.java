@@ -36,8 +36,7 @@ public class RegisterServlet extends HttpServlet {
             //获取用户名、密码、权限、昵称
             String username = request.getParameter("name");
             String password = request.getParameter("password");
-            String level = request.getParameter("level");
-            String nickname = request.getParameter("nickname");
+            String nickname = username;
 
             //MD5加密
             String code = MD5Utils.stringToMD5(password);
@@ -53,7 +52,7 @@ public class RegisterServlet extends HttpServlet {
                 pstmt.setString(1,username);
                 pstmt.setString(2,nickname);
                 pstmt.setString(3,code);
-                pstmt.setInt(4,Integer.parseInt(level));
+                pstmt.setInt(4,1);
                 int updateRows = pstmt.executeUpdate();
                 if(updateRows > 0){
                     String SelectIdSql = "select userid from users where name=?;";
@@ -65,21 +64,16 @@ public class RegisterServlet extends HttpServlet {
                         request.getSession().setAttribute("userid", SelectIdRs.getString("userid"));
                     }
                     request.getSession().setAttribute("level", level);
-                    out.write("注册成功 ============ ");
+                    out.write(1); //1代表注册成功
                     //完成后关闭
                     SelectIdRs.close();
-                    //申请成为评委
-                    if(Integer.parseInt(level)==2)
-                    {
-                        out.print("申请成为评委 =========");
-                    }
                 }else{
-                    out.write("注册失败 ============ ");
+                    out.write(2); //2代表已经被人抢注
                 }
             }
             else
             {
-                out.write("账号已存在 ============ ");
+                out.write(3); //3代表帐号已存在
             }
 
 //             完成后关闭
@@ -92,7 +86,6 @@ public class RegisterServlet extends HttpServlet {
         } catch(Exception e) {
             // 处理 Class.forName 错误
             e.printStackTrace();
-            out.write("注册失败 ============ ");
         }finally{
             // 最后是用于关闭资源的块
             try{
