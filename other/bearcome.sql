@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- 主机： 127.0.0.1
--- 生成日期： 2021-03-02 11:29:34
+-- 生成日期： 2021-03-08 07:50:30
 -- 服务器版本： 10.4.17-MariaDB
 -- PHP 版本： 8.0.1
 
@@ -32,6 +32,7 @@ USE `bearcome`;
 CREATE TABLE IF NOT EXISTS `competitor` (
   `userid` int(16) NOT NULL,
   `partake` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `score` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`score`)),
   PRIMARY KEY (`userid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -39,8 +40,8 @@ CREATE TABLE IF NOT EXISTS `competitor` (
 -- 转存表中的数据 `competitor`
 --
 
-REPLACE INTO `competitor` (`userid`, `partake`) VALUES
-(1, '3;');
+REPLACE INTO `competitor` (`userid`, `partake`, `score`) VALUES
+(1, '3;', NULL);
 
 -- --------------------------------------------------------
 
@@ -50,26 +51,30 @@ REPLACE INTO `competitor` (`userid`, `partake`) VALUES
 
 CREATE TABLE IF NOT EXISTS `contest` (
   `id` int(16) NOT NULL AUTO_INCREMENT,
-  `name` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `name` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
   `description` text COLLATE utf8mb4_unicode_ci NOT NULL,
   `starttime` datetime NOT NULL,
   `endtime` datetime NOT NULL,
   `maxmembers` int(16) NOT NULL,
-  `currentmembers` int(16) NOT NULL,
+  `currentmembers` int(16) NOT NULL DEFAULT 0,
   `userid` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `creatorid` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `judegemembers` int(16) NOT NULL DEFAULT 1,
   `jLock` tinyint(1) NOT NULL DEFAULT 0,
   `cLock` tinyint(1) NOT NULL DEFAULT 0,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `name` (`name`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- 转存表中的数据 `contest`
 --
 
-REPLACE INTO `contest` (`id`, `name`, `description`, `starttime`, `endtime`, `maxmembers`, `currentmembers`, `userid`, `jLock`, `cLock`) VALUES
-(1, 'test', 'hello', '2021-02-21 20:39:35', '2021-02-22 20:39:35', 10, 7, '', 0, 0),
-(2, 'test2', 'hey', '2021-02-23 20:40:06', '2021-02-24 20:40:06', 10, 6, '', 0, 0),
-(3, '1', '1', '2021-02-25 14:38:17', '2021-07-01 14:38:17', 100, 2, '1;', 0, 0);
+REPLACE INTO `contest` (`id`, `name`, `description`, `starttime`, `endtime`, `maxmembers`, `currentmembers`, `userid`, `creatorid`, `judegemembers`, `jLock`, `cLock`) VALUES
+(1, 'test', 'hello', '2021-02-21 20:39:35', '2021-02-22 20:39:35', 10, 7, '', '', 1, 0, 0),
+(2, 'test2', 'hey', '2021-02-23 20:40:06', '2021-02-24 20:40:06', 10, 6, '', '', 1, 0, 0),
+(3, '1', '1', '2021-02-25 14:38:17', '2021-07-01 14:38:17', 100, 2, '1;', '', 1, 0, 0),
+(4, '123123', '123131', '2021-03-04 13:53:17', '2021-03-05 13:53:17', 10, 0, NULL, '', 1, 0, 0);
 
 -- --------------------------------------------------------
 
@@ -98,14 +103,15 @@ CREATE TABLE IF NOT EXISTS `users` (
   `nickname` text COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`userid`),
   UNIQUE KEY `name` (`name`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- 转存表中的数据 `users`
 --
 
 REPLACE INTO `users` (`userid`, `name`, `password`, `WeChatCode`, `level`, `nickname`) VALUES
-(1, 'test', '098f6bcd4621d373cade4e832627b4f6', '', 1, '');
+(1, 'test', '098f6bcd4621d373cade4e832627b4f6', '', 1, ''),
+(4, 'judge', '1562eb3f6d9c5ac7e159c04a96ff4dfe', NULL, 2, 'judge');
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
