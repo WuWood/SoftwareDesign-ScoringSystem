@@ -18,12 +18,12 @@ import java.util.Date;
 public class CreateContest extends HttpServlet {
     private static final long serialVersionUID = 1L;
     // JDBC 驱动名及数据库 URL
-    static final String JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";
+    static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";  
     static final String DB_URL = "jdbc:mysql://localhost:3306/bearcome?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=GMT%2B8";
     
     // 数据库的用户名与密码，需要根据自己的设置
     static final String USER = "root";
-    static final String PASS = "qertyiop1a";
+    static final String PASS = "";
     /**
      * @see HttpServlet#HttpServlet()
      */
@@ -59,13 +59,10 @@ public class CreateContest extends HttpServlet {
                 String desc = request.getParameter("desc");
                 Timestamp starttime = Timestamp.valueOf(request.getParameter("starttime"));
                 Timestamp endtime = Timestamp.valueOf(request.getParameter("endtime"));
-
                 int max = Integer.parseInt(request.getParameter("max"));
                 String userid2 = String.valueOf(userid) + ";";
 
-
-
-                if(name != "" && desc != "" && starttime.getTime() < endtime.getTime())
+                if(name != "" && desc != "" && starttime != null && endtime != null && max > 0 && starttime.getTime() < endtime.getTime())
                 {
                     String sql = "SELECT name from contest where name=?";
                     pstmt = conn.prepareStatement(sql);

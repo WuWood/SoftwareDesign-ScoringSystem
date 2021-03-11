@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- 主机： 127.0.0.1
--- 生成日期： 2021-03-08 07:50:30
+-- 生成日期： 2021-03-11 14:57:20
 -- 服务器版本： 10.4.17-MariaDB
 -- PHP 版本： 8.0.1
 
@@ -59,22 +59,22 @@ CREATE TABLE IF NOT EXISTS `contest` (
   `currentmembers` int(16) NOT NULL DEFAULT 0,
   `userid` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `creatorid` text COLLATE utf8mb4_unicode_ci NOT NULL,
-  `judegemembers` int(16) NOT NULL DEFAULT 1,
+  `judegeid` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `jLock` tinyint(1) NOT NULL DEFAULT 0,
   `cLock` tinyint(1) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- 转存表中的数据 `contest`
 --
 
-REPLACE INTO `contest` (`id`, `name`, `description`, `starttime`, `endtime`, `maxmembers`, `currentmembers`, `userid`, `creatorid`, `judegemembers`, `jLock`, `cLock`) VALUES
-(1, 'test', 'hello', '2021-02-21 20:39:35', '2021-02-22 20:39:35', 10, 7, '', '', 1, 0, 0),
-(2, 'test2', 'hey', '2021-02-23 20:40:06', '2021-02-24 20:40:06', 10, 6, '', '', 1, 0, 0),
-(3, '1', '1', '2021-02-25 14:38:17', '2021-07-01 14:38:17', 100, 2, '1;', '', 1, 0, 0),
-(4, '123123', '123131', '2021-03-04 13:53:17', '2021-03-05 13:53:17', 10, 0, NULL, '', 1, 0, 0);
+REPLACE INTO `contest` (`id`, `name`, `description`, `starttime`, `endtime`, `maxmembers`, `currentmembers`, `userid`, `creatorid`, `judegeid`, `jLock`, `cLock`) VALUES
+(1, 'test', 'hello', '2021-02-21 20:39:35', '2021-02-22 20:39:35', 10, 7, '', '', '1', 0, 0),
+(2, 'test2', 'hey', '2021-02-23 20:40:06', '2021-02-24 20:40:06', 10, 6, '', '', '1', 0, 0),
+(3, '1', '1', '2021-02-25 14:38:17', '2021-07-01 14:38:17', 100, 2, '1;', '', '1', 0, 0),
+(4, '123123', '123131', '2021-03-04 13:53:17', '2021-03-05 13:53:17', 10, 0, NULL, '', '1', 0, 0);
 
 -- --------------------------------------------------------
 
@@ -91,12 +91,25 @@ CREATE TABLE IF NOT EXISTS `examine` (
 -- --------------------------------------------------------
 
 --
+-- 表的结构 `judge`
+--
+
+CREATE TABLE IF NOT EXISTS `judge` (
+  `userid` int(16) NOT NULL,
+  `partake` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `createpartake` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  PRIMARY KEY (`userid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
 -- 表的结构 `users`
 --
 
 CREATE TABLE IF NOT EXISTS `users` (
   `userid` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `name` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `password` text COLLATE utf8mb4_unicode_ci NOT NULL,
   `WeChatCode` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `level` int(11) NOT NULL,

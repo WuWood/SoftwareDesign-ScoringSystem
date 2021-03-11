@@ -1,0 +1,12 @@
+/* pages/create/create.wxss */
+textarea,input
+{
+  border: 2px solid #d1d1d1;
+  margin-bottom: 10px;
+}
+
+.t1
+{
+  display:flex;
+  justify-content:center;
+}
