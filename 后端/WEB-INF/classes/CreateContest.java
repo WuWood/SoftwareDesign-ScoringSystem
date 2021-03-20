@@ -49,18 +49,19 @@ public class CreateContest extends HttpServlet {
             // 打开一个连接
             conn = DriverManager.getConnection(DB_URL,USER,PASS);
 
-            /*int level = session.getAttribute("level");*/
-            /*int userid = session.getAttribute("userid");*/
+            /*int level = Integer.parseInt(request.getSession.getAttribute("level"));*/
+            /*int userid = Integer.parseInt(request.getSession.getAttribute("userid"));*/
             int level = 2;
             int userid = 4;
             if(level >= 2)
             {
                 String name = request.getParameter("name");
                 String desc = request.getParameter("desc");
+                int row;
                 Timestamp starttime = Timestamp.valueOf(request.getParameter("starttime"));
                 Timestamp endtime = Timestamp.valueOf(request.getParameter("endtime"));
                 int max = Integer.parseInt(request.getParameter("max"));
-                String userid2 = String.valueOf(userid) + ";";
+                String userid2 = String.valueOf(userid) + ",";
 
                 if(name != "" && desc != "" && starttime != null && endtime != null && max > 0 && starttime.getTime() < endtime.getTime())
                 {
@@ -79,7 +80,7 @@ public class CreateContest extends HttpServlet {
                         pstmt.setTimestamp(4, endtime);
                         pstmt.setInt(5, max);
                         pstmt.setString(6, userid2);
-                        int row = pstmt.executeUpdate();
+                        row = pstmt.executeUpdate();
 
                         if (row > 0)
                         {
@@ -98,12 +99,31 @@ public class CreateContest extends HttpServlet {
                                                 "PRIMARY KEY (`userid`)" +
                                                 ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 " + "COLLATE=utf8mb4_unicode_ci;";
                                 pstmt = conn.prepareStatement(sql);
-                                int row2 = pstmt.executeUpdate();
-                                System.out.print(row2);
+                                pstmt.executeUpdate();
+
+                                sql = "SELECT createpartake from judge where userid=?";
+                                pstmt = conn.prepareStatement(sql);
+                                pstmt.setInt(1, userid);
+                                rs = pstmt.executeQuery();           
+                                while(rs.next())
+                                {
+                                    String partake = rs.getString("createpartake");
+                                    String partake2 = partake + id + ",";
+                                    sql = "UPDATE judge set createpartake=? where userid="+Integer.toString(userid);
+                                    pstmt = conn.prepareStatement(sql);
+                                    pstmt.setString(1, partake2);
+                                    row = pstmt.executeUpdate();
+                                }
+
+                                sql = "INSERT INTO " + contest +"(userid) VALUES(?)";
+                                pstmt = conn.prepareStatement(sql);
+                                pstmt.setInt(1, userid);
+                                pstmt.executeUpdate();
+
                                 out.println(1); //创建成功
                             }
                         }
-                    } else out.print(3); //比赛已存在
+                    }else out.print(3); //比赛已存在
                 }else out.print(4); //参数错误
             }
 

@@ -4,7 +4,7 @@ Page({
   GetInfo:function(){
     var that = this;
     wx.request({
-      url: 'http://192.168.0.105:8080/test/ShowContest',
+      url: 'http://127.0.0.1:8080/test/ShowContest',
       header: { 'content-type': 'application/json' },
       data: null,
       success: function (res) {
@@ -12,8 +12,16 @@ Page({
         var arrayRes = [];
         if(res.data != "")
         {
-          for (var i = 0; i <= jsonRes.length - 2; i++) {
+          for (var i = 0; i <= jsonRes.length - 2; i++) 
+          {
             arrayRes.push(JSON.parse(jsonRes[i]));
+          }
+
+          if(jsonRes[jsonRes.length-1].trim() === "isJudge")
+          {
+            that.setData({
+              judge: true
+            });
           }
           that.setData({
             list: arrayRes
@@ -26,7 +34,6 @@ Page({
             none: true,
           })
         }
-
       },
       fail: function (res) {
         that.setData({
@@ -40,44 +47,53 @@ Page({
   Join: function (event) {
     var id = event.currentTarget.dataset.id;
     var that = this;
-    wx.request({
-      url: 'http://192.168.0.105:8080/test/JoinContest',
-      data: "id="+id,
-      method: "POST",
-      header:{
-        "Content-Type": "application/x-www-form-urlencoded"
-      },
-      success: function (res) {
-        that.GetInfo();
-        switch (res.data){
-          case 1:
-            wx.showToast({
-              title: '加入成功', //弹框内容
-              icon: 'success',  //弹框模式
-              duration: 2000    //弹框显示时间
-            });
-            break;
-          case 2:
-            wx.showToast({
-              title: '你已加入该比赛', //弹框内容
-              icon: 'none',  //弹框模式
-              duration: 2000    //弹框显示时间
-            });
-            break;
-          case 3:
-            wx.showToast({
-              title: '无法加入比赛', //弹框内容
-              icon: 'none',  //弹框模式
-              duration: 2000    //弹框显示时间
-            });
-            break;
-          default:
-            break;
-        }
-      },
-      fail: function(res){
-      },
-    });
+    if(that.data.judge == true)
+    {
+      wx.navigateTo({
+        url: '../examine/request/request?id=' + id,
+      });
+    }
+    else
+    {
+      wx.request({
+        url: 'http://127.0.0.1:8080/test/JoinContest',
+        data: "id="+id,
+        method: "POST",
+        header:{
+          "Content-Type": "application/x-www-form-urlencoded"
+        },
+        success: function (res) {
+          that.GetInfo();
+          switch (res.data){
+            case 1:
+              wx.showToast({
+                title: '加入成功', //弹框内容
+                icon: 'success',  //弹框模式
+                duration: 2000    //弹框显示时间
+              });
+              break;
+            case 2:
+              wx.showToast({
+                title: '你已加入该比赛', //弹框内容
+                icon: 'none',  //弹框模式
+                duration: 2000    //弹框显示时间
+              });
+              break;
+            case 3:
+              wx.showToast({
+                title: '无法加入比赛', //弹框内容
+                icon: 'none',  //弹框模式
+                duration: 2000    //弹框显示时间
+              });
+              break;
+            default:
+              break;
+          }
+        },
+        fail: function(res){
+        },
+      });
+    }
   },
   
   /**
@@ -86,6 +102,7 @@ Page({
   data: {
     list: [],
     none: false,
+    judge: false,
   },
 
   /**

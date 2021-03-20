@@ -4,14 +4,21 @@ Page({
   formSubmit: function(e)
   {
     var description = e.detail.value.textarea;
+    var that = this;
     if(description != "")
     {
+      if(that.data.contestid != null)
+      {
+        var data =  "id="+that.data.contestid+"&description="+description+"&action=request&type=2";
+      }
+      else var data = "description="+description+"&action=request&type=1";
       wx.request({
-        url: 'http://192.168.0.105:8080/test/ExamineJudges',
+        url: 'http://127.0.0.1:8080/test/ExamineJudges',
         header: {"Content-Type": "application/x-www-form-urlencoded"},
         method: "POST",
-        data: "description="+description+"&action=request",
+        data: data,
         success: function (res) {
+          console.log(res);
           switch (res.data){
             case 1:
               wx.showToast({
@@ -32,6 +39,11 @@ Page({
           }
         },
         fail: function (res) {
+          wx.showToast({
+            title: '提交失败，请检查网络状况',
+            icon: 'none',
+            duration: 2000,
+          });
         }
       });
     }
@@ -49,14 +61,19 @@ Page({
    * 页面的初始数据
    */
   data: {
-
+    contestid: ''
   },
 
   /**
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
-
+    var that = this;
+    var id = options.id;
+    that.setData
+    ({
+      contestid: id
+    });
   },
 
   /**

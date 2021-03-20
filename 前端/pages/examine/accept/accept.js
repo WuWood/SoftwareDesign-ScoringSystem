@@ -1,13 +1,13 @@
 // pages/examine/accept/accept.js
 Page({
-  Accept:function(can,userid)
+  Accept:function(can,index)
   {
     var that = this;
     wx.request({
-      url: 'http://192.168.0.105:8080/test/ExamineJudges',
+      url: 'http://127.0.0.1:8080/test/ExamineJudges',
       header: {"Content-Type": "application/x-www-form-urlencoded"},
       method: "POST",
-      data: "action=accept&can=" + can + "&userid=" + userid,
+      data: "action=accept&can=" + can + "&index=" + index + "&type=" + that.data.type,
       success:function(res)
       {
         that.GetInfo();
@@ -42,17 +42,17 @@ Page({
 
   Cando:function(event)
   {
-    var userid = event.currentTarget.dataset.userid;
+    var index = event.currentTarget.dataset.index;
     var can = event.currentTarget.dataset.can;
     var that = this;
     if(can == "yes")
     {
       wx.showModal({
         title: '提示',
-        content: '确定允许该用户成为评委吗？',
+        content: '确定允许吗？',
         success: function (res) {
           if (res.confirm) {
-            that.Accept(can,userid);
+            that.Accept(can,index);
           }
         }
       });
@@ -61,10 +61,10 @@ Page({
     {
       wx.showModal({
         title: '提示',
-        content: '确定拒绝该用户成为评委吗？',
+        content: '确定拒绝吗？',
         success: function (res) {
           if (res.confirm) {
-            that.Accept(can,userid);
+            that.Accept(can,index);
           }
         }
       });
@@ -74,10 +74,10 @@ Page({
   GetInfo:function(){
     var that = this;
     wx.request({
-      url: 'http://192.168.0.105:8080/test/ExamineJudges',
+      url: 'http://127.0.0.1:8080/test/ExamineJudges',
       header: {"Content-Type": "application/x-www-form-urlencoded"},
       method: "POST",
-      data: "action=show",
+      data: "action=show&type=" + that.data.type,
       success: function (res) {
         if(res.data != "")
         {
@@ -115,7 +115,8 @@ Page({
    */
   data: {
     list: [],
-    none:false
+    none:false,
+    type: 2,
   },
 
   /**

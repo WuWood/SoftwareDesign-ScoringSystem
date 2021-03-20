@@ -1,7 +1,7 @@
 <!--pages/examine/request/request.wxml-->
-<text>评委申请\n\n</text>
+<text>申请提交\n\n</text>
 <form bindsubmit="formSubmit">
-  <textarea class = "areas" placeholder = "请输入申请评委的原因" name = "textarea"></textarea>
+  <textarea class = "areas" placeholder = "请输入申请的原因" name = "textarea"></textarea>
   <text>\n</text>
   <button form-type="submit"> 提交 </button>
 </form>

@@ -15,7 +15,7 @@ Page({
   onLoad: function (options) {
     var that = this;
     wx.request({
-      url: 'http://192.168.0.105:8080/test/ShowPersonal',
+      url: 'http://127.0.0.1:8080/test/ShowPersonal',
       header: { 'content-type': 'application/json' },
       data: null,
       success: function (res) {

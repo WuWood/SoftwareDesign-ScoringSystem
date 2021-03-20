@@ -73,7 +73,6 @@ Page({
         method: "POST",
         data: "name=" + name + "&desc=" + desc + "&starttime=" + starttime + "&endtime=" + endtime + "&max=" + max,
         success: function (res) {
-          console.log(res.data);
           switch (res.data){
             case 1:
               wx.showToast({
