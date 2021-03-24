@@ -1,4 +1,8 @@
 // pages/login/login.js
+// 获取应用实例
+const app = getApp();
+const domain = app.globalData.domain;
+
 Page({
 
   /**
@@ -75,8 +79,8 @@ Page({
   create_login: function (e) {
     console.log(e.detail.value)
     wx.request({
-      url: 'http://localhost:8080/LoginServlet',
-      data: "username=" + e.detail.value["username"] + "&password=" + e.detail.value["password"],
+      url: domain + '/LoginServlet2',
+      data: "username=" + e.detail.value["username"] + "&password=" + e.detail.value["password"] + "&method=PasswordLogin",
       method: 'POST',
       header: {
         //'content-type': 'application/json' // 默认值
@@ -87,6 +91,7 @@ Page({
   },
   getResult: function (res) {
     console.log(res.data);
+    console.log(".....success request.....");
 
     if (res && res.header && res.header['Set-Cookie']) {
       wx.setStorageSync('cookieKey', res.header['Set-Cookie']);   //保存Cookie到Storage

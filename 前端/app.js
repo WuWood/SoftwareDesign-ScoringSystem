@@ -36,6 +36,7 @@ App({
     })
   },
   globalData: {
-    userInfo: null
+    userInfo: null,
+    domain: "http://pf.rebus.work:8080"
   }
 })
