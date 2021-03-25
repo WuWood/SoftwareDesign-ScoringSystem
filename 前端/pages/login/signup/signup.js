@@ -1,4 +1,8 @@
 // pages/signup.js
+// 获取应用实例
+const app = getApp();
+const domain = app.globalData.domain;
+
 Page({
 
   /**
@@ -67,7 +71,7 @@ Page({
   create_signup: function (e) {
     console.log(e.detail.value)
     wx.request({
-      url: 'http://localhost:8080/UserServlet',
+      url: domain + '/RegisterServlet',
       data:"username=" + e.detail.value["username"] + "&password=" + e.detail.value["password"],
       method: 'POST',
       header: {
@@ -76,6 +80,7 @@ Page({
       },
       success: function (res) {
         console.log(res.data);
+        console.log(".....success request.....");
       },
     })
   },

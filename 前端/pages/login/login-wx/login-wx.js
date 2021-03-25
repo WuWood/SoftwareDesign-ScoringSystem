@@ -1,4 +1,8 @@
 // pages/login/login-of-wechat/login-wx.js
+// 获取应用实例
+const app = getApp();
+const domain = app.globalData.domain;
+
 Page({
 
   /**
@@ -70,9 +74,11 @@ Page({
         if (res.code) {
           //发起网络请求
           wx.request({
-            url: 'http://127.0.0.1:8080/LoginServlet',
+            url: domain + '/LoginServlet2',
             data: {
-              code: res.code
+              nickname: "wechat user",
+              code: res.code,
+              method: "WeChatLogin"
             },
             method: "POST",
             
