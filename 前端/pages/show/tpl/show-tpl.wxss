@@ -1,0 +1,6 @@
+/* pages/show/tpl/show-tpl.wxss */
+.content button
+{
+  position: relative;
+  left: 25%;
+}

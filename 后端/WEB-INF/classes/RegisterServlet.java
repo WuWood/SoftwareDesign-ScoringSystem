@@ -47,7 +47,7 @@ public class RegisterServlet extends HttpServlet {
             ResultSet rs = pstmt.executeQuery();
             if(!rs.first()) {
                 // 执行 SQL
-                String ReplaceSql = "replace into users(name,nickname,password,level) values(?,?,?,?);";
+                String ReplaceSql = "insert into users(name,nickname,password,level) values(?,?,?,?);";
                 pstmt = conn.prepareStatement(ReplaceSql);
                 pstmt.setString(1,username);
                 pstmt.setString(2,nickname);

@@ -55,13 +55,8 @@ public class ShowPersonal extends HttpServlet {
             ResultSet rs = pstmt.executeQuery();
 
             while(rs.next()){
-                String [] partake = rs.getString("partake").split(";");
-                String partake2 = "";
-                for(String name : partake){
-                    if(name == "") break;
-                    partake2 = partake2 + name + ",";
-                }
-                partake2 = partake2.substring(0,partake2.length()-1);
+                String partake = rs.getString("partake");
+                String partake2 = partake.substring(0,partake.length()-1);
                 
                 sql = "SELECT id,name,description from contest where FIND_IN_SET(id,?);";
                 pstmt = conn.prepareStatement(sql);

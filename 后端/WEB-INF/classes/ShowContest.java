@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+
 /**
  * Servlet implementation class ShowContest
  */
@@ -72,7 +73,13 @@ public class ShowContest extends HttpServlet {
                 "\",\"currentmembers\":\"" + currentmembers +
                 "\",\"maxmembers\":\"" + maxmembers +
                 "\"};");
-                
+            }
+
+            /*int level = Integer.parseInt(request.getSession.getAttribute("level"));*/
+            int level = 2;
+            if(level > 1)
+            {
+                out.println("isJudge");
             }
 
             // 完成后关闭

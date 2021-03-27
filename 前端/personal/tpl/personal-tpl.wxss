@@ -1,6 +1,0 @@
-/* pages/personal/tpl/personal-tpl.wxss */
-.content button
-{
-  position: relative;
-  left: 25%;
-}
