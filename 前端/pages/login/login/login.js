@@ -16,16 +16,7 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
-    console.log(options)
-    wx.getUserInfo({
-      success: this.setUserInfo.bind(this)
-    })
-    this.setData({
-      
-    })
-  },
-  setUserInfo: function (res) {
-    this.setData({ user: res.userInfo })
+    
   },
 
   /**
@@ -79,9 +70,9 @@ Page({
   create_login: function (e) {
     console.log(e.detail.value)
     wx.request({
-      url: domain + '/LoginServlet2',
+      url: domain + "/LoginServlet2",
       data: "username=" + e.detail.value["username"] + "&password=" + e.detail.value["password"] + "&method=PasswordLogin",
-      method: 'POST',
+      method: "POST",
       header: {
         //'content-type': 'application/json' // 默认值
         'Content-Type': 'application/x-www-form-urlencoded'
@@ -94,39 +85,38 @@ Page({
     console.log(".....success request.....");
 
     if (res && res.header && res.header['Set-Cookie']) {
-      wx.setStorageSync('cookieKey', res.header['Set-Cookie']);   //保存Cookie到Storage
+      wx.setStorageSync('cookieKey', res.header['Set-Cookie']); //保存Cookie到Storage
     }
 
-    if (res.data == "true") {
+    let cookie = wx.getStorageSync('cookieKey'); //取出Cookie
+    let header = { 'Content-Type': 'application/x-www-form-urlencoded'};
+    if (cookie) {
+        header.Cookie = cookie;
+    }
+    console.log(cookie)
+
+    if (res.data == "1") {
       wx.showToast({
         title: "登录成功",
         duration: 2000
       })
-      wx.switchTab({
-        url: '/pages/index/index',
-      })
+      // wx.navigateTo({
+      //   url: '/pages/index/index',
+      // })
       setTimeout(function () {
         wx.navigateBack({
-          delta: 2
+          delta: 2 //返回上一页再返回上一页
         })
       }, 1000)
     }
-
-    if(res.data == "false"){
+    else if(res.data == "2") {
       wx.showToast({
-        title: "账号或密码不对",
+        title: "账号或密码错误",
         icon: 'none',
         duration: 3000
       })
-      setTimeout(function () {
-        wx.navigateBack({
-          delta: 2
-        })
-      }, 1000)
     }
-  },
-  
-  goto_index:function(res){
+
   },
   
   goto_signup: function (res) {
