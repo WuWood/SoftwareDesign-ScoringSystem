@@ -6,9 +6,11 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.*;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
-@WebServlet("/RegisterServlet")
-public class RegisterServlet extends HttpServlet {
+@WebServlet("/LoginServlet")
+public class LoginServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     // JDBC 驱动名及数据库 URL
     static final String JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";
@@ -18,65 +20,56 @@ public class RegisterServlet extends HttpServlet {
     static final String USER = "root";
     static final String PASS = "";
 
+
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         Connection conn = null;
         PreparedStatement pstmt = null;
+        //判断是否登录成功
+        boolean IsLogin=false;
+
 
         // 设置响应内容类型
-        response.setContentType("text/html;charset=UTF-8");
+        response.setContentType("text/html;charset=utf-8");
         PrintWriter out = response.getWriter();
         try{
             // 注册 JDBC 驱动器
             Class.forName(JDBC_DRIVER);
-
             // 打开一个连接
             conn = DriverManager.getConnection(DB_URL,USER,PASS);
-
-            //获取用户名、密码、权限、昵称
+            //获取用户名和密码
             String username = request.getParameter("name");
             String password = request.getParameter("password");
-            String nickname = username;
-
             //MD5加密
             String code = MD5Utils.stringToMD5(password);
 
-            String SelectSql = "select * from users where name=?;";
-            pstmt = conn.prepareStatement(SelectSql);
+            // 执行 SQL 查询
+            String sql;
+            sql = "select * from users where name=?;";
+            pstmt = conn.prepareStatement(sql);
             pstmt.setString(1,username);
             ResultSet rs = pstmt.executeQuery();
-            if(!rs.first()) {
-                // 执行 SQL
-                String ReplaceSql = "insert into users(name,nickname,password,level) values(?,?,?,?);";
-                pstmt = conn.prepareStatement(ReplaceSql);
-                pstmt.setString(1,username);
-                pstmt.setString(2,nickname);
-                pstmt.setString(3,code);
-                pstmt.setInt(4,1);
-                int updateRows = pstmt.executeUpdate();
-                if(updateRows > 0){
-                    String SelectIdSql = "select userid from users where name=?;";
-                    pstmt = conn.prepareStatement(SelectIdSql);
-                    pstmt.setString(1,username);
-                    ResultSet SelectIdRs = pstmt.executeQuery();
-                    while (SelectIdRs.next())
-                    {
-                        request.getSession().setAttribute("userid", SelectIdRs.getString("userid"));
-                    }
-                    request.getSession().setAttribute("level", level);
-                    out.write(1); //1代表注册成功
-                    //完成后关闭
-                    SelectIdRs.close();
-                }else{
-                    out.write(2); //2代表已经被人抢注
+
+            while(rs.next()) {
+                // 通过字段检索
+                if (rs.getString("password").equals(code)) {
+                    request.getSession().setAttribute("userid", rs.getString("userid"));
+                    request.getSession().setAttribute("level", rs.getString("level"));
+                    out.write("登录成功 ============ ");
+                    IsLogin=true;
+                    break;
                 }
             }
-            else
+
+            if(IsLogin==false)
             {
-                out.write(3); //3代表帐号已存在
+                out.write("登录失败 ============ ");
             }
 
-//             完成后关闭
+            // 完成后关闭
+            System.out.print(request.getSession().getAttribute("userid"));
+            System.out.print(request.getSession().getAttribute("level"));
             rs.close();
             pstmt.close();
             conn.close();
@@ -106,5 +99,4 @@ public class RegisterServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         doGet(req, resp);
     }
-
 }
