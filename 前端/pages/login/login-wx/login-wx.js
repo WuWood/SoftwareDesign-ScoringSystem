@@ -9,7 +9,7 @@ Page({
    * 页面的初始数据
    */
   data: {
-
+    userInfo: {}
   },
 
   /**
@@ -67,37 +67,83 @@ Page({
   onShareAppMessage: function () {
 
   },
-  
+
+  getUserInfo(e) {
+    console.log(e)
+    app.globalData.userInfo = e.detail.userInfo
+    this.setData({
+      userInfo: e.detail.userInfo,
+      hasUserInfo: true
+    })
+
+    this.create_login_wx(e)
+  },
+
   create_login_wx: function (e) {
     wx.login({
       success (res) {
         if (res.code) {
+          
+          console.log(e.detail.userInfo.nickName);
+          console.log(res.code);
+
           //发起网络请求
           wx.request({
-            url: domain + '/LoginServlet2',
+            url: domain + "/LoginServlet2",
             data: {
-              nickname: "wechat user",
+              nickname: e.detail.userInfo.nickName,
               code: res.code,
               method: "WeChatLogin"
             },
             method: "POST",
+            header: {
+              //'content-type': 'application/json' // 默认值
+              'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8'
+            },
             
             success: function (res) {
               console.log(res.data);
+              console.log(".....success request.....");
+          
               if (res && res.header && res.header['Set-Cookie']) {
-                wx.setStorageSync('cookieKey', res.header['Set-Cookie']);   //保存Cookie到Storage
+                wx.setStorageSync('cookieKey', res.header['Set-Cookie']); //保存Cookie到Storage
               }
-              let cookie = wx.getStorageSync('cookieKey');//取出Cookie
+          
+              let cookie = wx.getStorageSync('cookieKey'); //取出Cookie
               let header = { 'Content-Type': 'application/x-www-form-urlencoded'};
               if (cookie) {
                   header.Cookie = cookie;
               }
               console.log(cookie)
-            }
+          
+              if (res.data == "1" || res.data == "3") {
+                wx.showToast({
+                  title: "登录成功",
+                  duration: 2000
+                })
+                // wx.navigateTo({
+                //   url: '/pages/index/index',
+                // })
+                setTimeout(function () {
+                  wx.navigateBack({
+                    delta: 1 //返回上一页
+                  })
+                }, 1000)
+              }
+              else if(res.data == "2" || res.data == "4") {
+                wx.showToast({
+                  title: "微信登录失败",
+                  icon: 'none',
+                  duration: 3000
+                })
+              }
+          
+            },
 
           })
-        } else {
-          console.log('登录失败！' + res.errMsg)
+        }
+        else {
+          console.log('无法获取临时登录凭证code' + res.errMsg)
         }
       }
     })

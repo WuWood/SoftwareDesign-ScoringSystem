@@ -37,6 +37,6 @@ App({
   },
   globalData: {
     userInfo: null,
-    domain: "http://pf.rebus.work:8080"
+    domain: "https://pf.rebus.work" //全局的服务器请求地址，必须包含协议头（http://或https://），根据实际情况可加上端口号（:8080）
   }
 })
