@@ -1,5 +1,15 @@
-<!--pages/login/login-of-wechat/login-wx.wxml-->
+<!--pages/login/login-wx/login-wx.wxml-->
 <view class="container">
-  <button class="btn-login-wx" open-type="getUserInfo" bindgetuserinfo="getUserInfo"><text>微信一键登录</text></button>
-  <button class="btn-login" bindtap="goto_login"><text>用户名登录</text></button>
+  <view class="userinfo">
+    <block>
+      <image bindtap="bindViewTap" class="userinfo-avatar" src="{{userInfo.avatarUrl}}" mode="cover"></image>
+      <text class="userinfo-nickname">{{userInfo.nickName}}</text>
+    </block>
+  </view>
+  <view class="usermotto">
+    <text class="user-motto">{{motto}}</text>
+  </view>
+  <view class="usermotto">
+    <button class="btn-login-wx" bindtap="create_login_wx"><text>微信登录</text></button>
+  </view>
 </view>

@@ -53,7 +53,7 @@ Page({
   },
   OnClick: function() {
     wx.navigateTo({
-      url: '/pages/login/login-wx/login-wx',
+      url: "/pages/login/login-before",
     })
   }
 })
