@@ -7,6 +7,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -52,10 +53,9 @@ public class JoinContest extends HttpServlet {
             {
 
                 int id = Integer.parseInt(request.getParameter("id"));
-                /*int userid = Integer.parseInt(request.getSession.getAttribute("userid"));
-                int level = Integer.parseInt(request.getSession.getAttribute("level"));*/
-                int userid = 4;
-                int level = 2;
+                HttpSession session = request.getSession();
+                int userid = Integer.parseInt(session.getAttribute("userid").toString());
+                int level = Integer.parseInt(session.getAttribute("level").toString());
 
                 // ÷¥–– SQL ≤È—Ø
                 String sql;

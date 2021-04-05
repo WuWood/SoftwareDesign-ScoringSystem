@@ -69,7 +69,10 @@ Page({
     {
       wx.request({
         url: 'http://127.0.0.1:8080/test/CreateContest',
-        header: {"Content-Type": "application/x-www-form-urlencoded"},
+        header: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          "Cookie": wx.getStorageSync('JSESSIONID')
+        },
         method: "POST",
         data: "name=" + name + "&desc=" + desc + "&starttime=" + starttime + "&endtime=" + endtime + "&max=" + max,
         success: function (res) {

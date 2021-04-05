@@ -7,6 +7,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
  * Servlet implementation class ShowPersonal
@@ -45,7 +46,7 @@ public class ShowPersonal extends HttpServlet {
             // 打开一个连接
             conn = DriverManager.getConnection(DB_URL,USER,PASS);
 
-            int userid = 1;
+            int userid = Integer.parseInt(request.getSession().getAttribute("userid").toString());
 
             // 执行 SQL 查询
             String sql;

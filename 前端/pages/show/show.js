@@ -1,11 +1,17 @@
 // pages/show/show.js
+const app = getApp();
+const domain = app.globalData.domain;
 
 Page({
   GetInfo:function(){
     var that = this;
+    app.Check();
     wx.request({
-      url: 'http://127.0.0.1:8080/test/ShowContest',
-      header: { 'content-type': 'application/json' },
+      url: domain + "/ShowContest",
+      header: {
+        'content-type': 'application/json',
+        "Cookie": wx.getStorageSync('JSESSIONID')
+      },
       data: null,
       success: function (res) {
         var jsonRes = res.data.split(";");
@@ -60,7 +66,8 @@ Page({
         data: "id="+id,
         method: "POST",
         header:{
-          "Content-Type": "application/x-www-form-urlencoded"
+          "Content-Type": "application/x-www-form-urlencoded",
+          "Cookie": wx.getStorageSync('JSESSIONID')
         },
         success: function (res) {
           that.GetInfo();

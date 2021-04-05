@@ -7,7 +7,6 @@
     <text>竞赛时间：{{starttime}} ~ {{endtime}}\n</text>
     <text>当前参赛人数：{{currentmembers}}\n</text>
     <text>最大参赛人数：{{maxmembers}}\n</text>
-    <button bindtap = "Join" data-id="{{id}}" wx:if = "{{judge}}">加入比赛</button>
-    <button wx:else bindtap = "Join"  data-id="{{id}}">参加评分</button>
+    <button bindtap = "Join" data-id="{{id}}">加入</button>
   </view>
 </template>

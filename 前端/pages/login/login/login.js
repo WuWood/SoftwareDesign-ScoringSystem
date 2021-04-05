@@ -89,15 +89,12 @@ Page({
   
   /*返回数据处理事件*/
   getResult: function (res) {
-    
-    console.log("......Successful Request......");
-    console.log(res.data);
 
     // Cookies
     if (res && res.header && res.header['Set-Cookie']) {
-      wx.setStorageSync('cookieKey', res.header['Set-Cookie']); // 保存Cookie到Storage
+      wx.setStorageSync('JSESSIONID', res.header['Set-Cookie']); // 保存Cookie到Storage
     }
-    let cookie = wx.getStorageSync('cookieKey'); // 取出Cookie
+    let cookie = wx.getStorageSync('JSESSIONID'); // 取出Cookie
     let header = { 'Content-Type': 'application/x-www-form-urlencoded'};
     if (cookie) {
         header.Cookie = cookie;
@@ -111,10 +108,15 @@ Page({
         duration: 2000
       })
       setTimeout(function () {
+        wx.navigateTo({
+          url: '../../show/show',
+        })
+      }, 1000)
+      /*setTimeout(function () {
         wx.navigateBack({
           delta: 2 // 返回上一页再返回上一页（返回到主页）
         })
-      }, 1000)
+      }, 1000)*/
     }
     else if(res.data == "2") {
       wx.showToast({
