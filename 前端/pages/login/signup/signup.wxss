@@ -1,4 +1,4 @@
-/* pages/signup.wxss */
+/* pages/login/signup/signup.wxss */
 .container {
   background-color:#ffffff;
   height: 100vh;

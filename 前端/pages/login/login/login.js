@@ -1,4 +1,4 @@
-// pages/login/login.js
+// pages/login/login/login.js
 // 获取应用实例
 const app = getApp();
 const domain = app.globalData.domain;
@@ -67,8 +67,13 @@ Page({
   onShareAppMessage: function () {
 
   },
+  
+  /*传统登录事件*/
   create_login: function (e) {
-    console.log(e.detail.value)
+    
+    console.log(e.detail.value);
+
+    // 发起传统登录请求
     wx.request({
       url: domain + "/LoginServlet2",
       data: "username=" + e.detail.value["username"] + "&password=" + e.detail.value["password"] + "&method=PasswordLogin",
@@ -77,35 +82,37 @@ Page({
         //'content-type': 'application/json' // 默认值
         'Content-Type': 'application/x-www-form-urlencoded'
       },
-      success: this.getResult.bind(this)
+      success: this.getResult.bind(this) // 处理返回数据
     })
+
   },
+  
+  /*返回数据处理事件*/
   getResult: function (res) {
+    
+    console.log("......Successful Request......");
     console.log(res.data);
-    console.log(".....success request.....");
 
+    // Cookies
     if (res && res.header && res.header['Set-Cookie']) {
-      wx.setStorageSync('cookieKey', res.header['Set-Cookie']); //保存Cookie到Storage
+      wx.setStorageSync('cookieKey', res.header['Set-Cookie']); // 保存Cookie到Storage
     }
-
-    let cookie = wx.getStorageSync('cookieKey'); //取出Cookie
+    let cookie = wx.getStorageSync('cookieKey'); // 取出Cookie
     let header = { 'Content-Type': 'application/x-www-form-urlencoded'};
     if (cookie) {
         header.Cookie = cookie;
     }
     console.log(cookie)
 
+    // 页面交互逻辑
     if (res.data == "1") {
       wx.showToast({
         title: "登录成功",
         duration: 2000
       })
-      // wx.navigateTo({
-      //   url: '/pages/index/index',
-      // })
       setTimeout(function () {
         wx.navigateBack({
-          delta: 2 //返回上一页再返回上一页
+          delta: 2 // 返回上一页再返回上一页（返回到主页）
         })
       }, 1000)
     }
@@ -119,9 +126,11 @@ Page({
 
   },
   
+  /*按钮事件 - 导航到注册页*/
   goto_signup: function (res) {
     wx.navigateTo({
-      url: '/pages/login/signup/signup',
+      url: "/pages/login/signup/signup",
     })
   }
+
 })

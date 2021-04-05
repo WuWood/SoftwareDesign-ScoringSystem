@@ -1,4 +1,4 @@
-// pages/signup.js
+// pages/login/signup/signup.js
 // 获取应用实例
 const app = getApp();
 const domain = app.globalData.domain;
@@ -68,20 +68,51 @@ Page({
 
   },
 
+  /*注册事件*/
   create_signup: function (e) {
-    console.log(e.detail.value)
+    
+    console.log(e.detail.value);
+
+    // 发起注册请求
     wx.request({
-      url: domain + '/RegisterServlet',
+      url: domain + "/RegisterServlet",
       data:"username=" + e.detail.value["username"] + "&password=" + e.detail.value["password"],
-      method: 'POST',
+      method: "POST",
       header: {
         //'content-type': 'application/json' // 默认值
         'Content-Type': 'application/x-www-form-urlencoded'
       },
-      success: function (res) {
-        console.log(res.data);
-        console.log(".....success request.....");
-      },
+      success: this.getResult.bind(this) // 处理返回数据
     })
+
   },
+
+  /*返回数据处理事件*/
+  getResult: function (res) {
+    
+    console.log("......Successful Request......");
+    console.log(res.data);
+
+    // 页面交互逻辑
+    if (res.data == "1") {
+      wx.showToast({
+        title: "注册成功",
+        duration: 2000
+      })
+      setTimeout(function () {
+        wx.navigateBack({
+          delta: 1 //返回上一页（返回到传统登录页）
+        })
+      }, 1000)
+    }
+    else if(res.data == "3") {
+      wx.showToast({
+        title: "用户名已存在",
+        icon: 'none',
+        duration: 3000
+      })
+    }
+
+  },
+  
 })
