@@ -1,4 +1,4 @@
-/* pages/login/login-wx/login-wx.wxss */
+/**index.wxss**/
 .userinfo {
   display: flex;
   flex-direction: column;
@@ -16,19 +16,6 @@
   color: #aaa;
 }
 
-
 .usermotto {
   margin-top: 200rpx;
-}
-
-
-.btn-login-wx{
-  background-color: #07c160;
-  width: 700rpx;
-  border-radius: 10rpx;
-  position: relative;
-}
-
-.btn-login-wx text{
-  color:white;
 }

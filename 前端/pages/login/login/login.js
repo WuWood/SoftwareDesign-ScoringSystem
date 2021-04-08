@@ -1,4 +1,4 @@
-// pages/login/login.js
+// pages/login/login/login.js
 // 获取应用实例
 const app = getApp();
 const domain = app.globalData.domain;
@@ -16,16 +16,7 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
-    console.log(options)
-    wx.getUserInfo({
-      success: this.setUserInfo.bind(this)
-    })
-    this.setData({
-      
-    })
-  },
-  setUserInfo: function (res) {
-    this.setData({ user: res.userInfo })
+    
   },
 
   /**
@@ -76,62 +67,72 @@ Page({
   onShareAppMessage: function () {
 
   },
+  
+  /*传统登录事件*/
   create_login: function (e) {
-    console.log(e.detail.value)
+    
+    console.log(e.detail.value);
+
+    // 发起传统登录请求
     wx.request({
-      url: domain + '/LoginServlet2',
+      url: domain + "/LoginServlet2",
       data: "username=" + e.detail.value["username"] + "&password=" + e.detail.value["password"] + "&method=PasswordLogin",
-      method: 'POST',
+      method: "POST",
       header: {
         //'content-type': 'application/json' // 默认值
         'Content-Type': 'application/x-www-form-urlencoded'
       },
-      success: this.getResult.bind(this)
+      success: this.getResult.bind(this) // 处理返回数据
     })
+
   },
+  
+  /*返回数据处理事件*/
   getResult: function (res) {
-    console.log(res.data);
-    console.log(".....success request.....");
 
+    // Cookies
     if (res && res.header && res.header['Set-Cookie']) {
-      wx.setStorageSync('cookieKey', res.header['Set-Cookie']);   //保存Cookie到Storage
+      wx.setStorageSync('JSESSIONID', res.header['Set-Cookie']); // 保存Cookie到Storage
     }
+    let cookie = wx.getStorageSync('JSESSIONID'); // 取出Cookie
+    let header = { 'Content-Type': 'application/x-www-form-urlencoded'};
+    if (cookie) {
+        header.Cookie = cookie;
+    }
+    console.log(cookie)
 
-    if (res.data == "true") {
+    // 页面交互逻辑
+    if (res.data == "1") {
       wx.showToast({
         title: "登录成功",
         duration: 2000
       })
-      wx.switchTab({
-        url: '/pages/index/index',
-      })
       setTimeout(function () {
-        wx.navigateBack({
-          delta: 2
+        wx.navigateTo({
+          url: '../../show/show',
         })
       }, 1000)
+      /*setTimeout(function () {
+        wx.navigateBack({
+          delta: 2 // 返回上一页再返回上一页（返回到主页）
+        })
+      }, 1000)*/
     }
-
-    if(res.data == "false"){
+    else if(res.data == "2") {
       wx.showToast({
-        title: "账号或密码不对",
+        title: "账号或密码错误",
         icon: 'none',
         duration: 3000
       })
-      setTimeout(function () {
-        wx.navigateBack({
-          delta: 2
-        })
-      }, 1000)
     }
+
   },
   
-  goto_index:function(res){
-  },
-  
+  /*按钮事件 - 导航到注册页*/
   goto_signup: function (res) {
     wx.navigateTo({
-      url: '/pages/login/signup/signup',
+      url: "/pages/login/signup/signup",
     })
   }
+
 })

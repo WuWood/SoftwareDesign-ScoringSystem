@@ -1,15 +1,24 @@
+// pages/login/login-before.js
+// 获取应用实例
+const app = getApp();
+const domain = app.globalData.domain;
 
 Page({
+
   /**
    * 页面的初始数据
    */
   data: {
+    userInfo: {},
+    hasUserInfo: false,
+    canIUse: wx.canIUse('button.open-type.getUserInfo')
   },
 
   /**
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
+
   },
 
   /**
@@ -59,5 +68,28 @@ Page({
    */
   onShareAppMessage: function () {
 
+  },
+
+  /*获取用户信息并跳转到微信登陆页*/
+  getUserInfo(e) {
+    console.log(e)
+    app.globalData.userInfo = e.detail.userInfo
+    this.setData({
+      userInfo: e.detail.userInfo,
+      hasUserInfo: true
+    })
+
+    // 跳转到微信登陆页
+    wx.navigateTo({
+      url: "/pages/login/login-wx/login-wx",
+    })
+  },
+
+  /*按钮事件 - 导航到传统登录页*/
+  goto_login: function() {
+    wx.navigateTo({
+      url: "/pages/login/login/login",
+    })
   }
+
 })

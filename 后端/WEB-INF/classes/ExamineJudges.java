@@ -7,6 +7,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -56,84 +57,86 @@ public class ExamineJudges extends HttpServlet {
                 String description = "";
                 int id = -1;
                 String nickname;
-                int level;
+                int level = 0;
                 String partake;
                 String partake2 = "";
                 int index = -1;
+                HttpSession session = request.getSession();
                 if(action.equals("show")) //显示申请信息
                 {
-                    /*if(request.getSession.getAttribute("level") == 3；*/
-                    if(type == 2)
+                    if(Integer.parseInt(session.getAttribute("level").toString()) == 3)
                     {
-                        /*userid = request.getSession.Attribute("userid");*/
-                        userid = 4;
-                        sql = "SELECT createpartake from judge where userid=?";
-                        pstmt = conn.prepareStatement(sql);
-                        pstmt.setInt(1,userid);
-                        rs = pstmt.executeQuery();
-                        while(rs.next())
+                        if(type == 2)
                         {
-                            String createpartake = rs.getString("createpartake");
-                            String createpartake2 = createpartake.substring(0,createpartake.length() - 1);
-                            sql = "SELECT * from examine where type=2 and FIND_IN_SET(id,?)";
+                            userid = Integer.parseInt(session.getAttribute("userid").toString());
+                            sql = "SELECT createpartake from judge where userid=?";
                             pstmt = conn.prepareStatement(sql);
-                            pstmt.setString(1,createpartake2);
+                            pstmt.setInt(1,userid);
+                            rs = pstmt.executeQuery();
+                            while(rs.next())
+                            {
+                                String createpartake = rs.getString("createpartake");
+                                String createpartake2 = createpartake.substring(0,createpartake.length() - 1);
+                                sql = "SELECT * from examine where type=2 and FIND_IN_SET(id,?)";
+                                pstmt = conn.prepareStatement(sql);
+                                pstmt.setString(1,createpartake2);
+                                rs = pstmt.executeQuery();
+                                while(rs.next())
+                                {
+                                    userid = rs.getInt("userid");
+                                    description = rs.getString("description");
+                                    id = rs.getInt("id");
+                                    index = rs.getInt("index1");
+                                }
+                            }
+                        }
+                        else
+                        {
+                            sql = "SELECT * from examine where type=1;";
+                            pstmt = conn.prepareStatement(sql);
                             rs = pstmt.executeQuery();
                             while(rs.next())
                             {
                                 userid = rs.getInt("userid");
                                 description = rs.getString("description");
-                                id = rs.getInt("id");
                                 index = rs.getInt("index1");
                             }
                         }
-                    }
-                    else
-                    {
-                        sql = "SELECT * from examine where type=1;";
+                        sql = "SELECT name from users where userid=?";
                         pstmt = conn.prepareStatement(sql);
+                        pstmt.setInt(1,userid);
                         rs = pstmt.executeQuery();
                         while(rs.next())
                         {
-                            userid = rs.getInt("userid");
-                            description = rs.getString("description");
-                            index = rs.getInt("index1");
-                        }
-                    }
-                    sql = "SELECT name from users where userid=?";
-                    pstmt = conn.prepareStatement(sql);
-                    pstmt.setInt(1,userid);
-                    rs = pstmt.executeQuery();
-                    while(rs.next())
-                    {
-                        if(id != -1 && userid !=-1 && description != "" && index != -1) //初值不具有任何意义，仅绕过java的编译检查
-                        {
-                            String name = rs.getString("name");
-                            if(type == 2)
+                            if(id != -1 && userid !=-1 && description != "" && index != -1) //初值不具有任何意义，仅绕过java的编译检查
                             {
-                                sql = "SELECT name from contest where id=?";
-                                pstmt = conn.prepareStatement(sql);
-                                pstmt.setInt(1,id);
-                                rs = pstmt.executeQuery();
-                                while(rs.next())
+                                String name = rs.getString("name");
+                                if(type == 2)
                                 {
-                                    String contestname = rs.getString("name");
+                                    sql = "SELECT name from contest where id=?";
+                                    pstmt = conn.prepareStatement(sql);
+                                    pstmt.setInt(1,id);
+                                    rs = pstmt.executeQuery();
+                                    while(rs.next())
+                                    {
+                                        String contestname = rs.getString("name");
+                                        out.println("{\"index\":\"" + index + 
+                                        "\",\"userid\":\"" + userid +
+                                        "\",\"name\":\"" + name +
+                                        "\",\"description\":\"" + description +
+                                        "\",\"id\":\"" + id +
+                                        "\",\"contestname\":\"" + contestname +
+                                        "\"};");
+                                    }                
+                                }
+                                else
+                                {
                                     out.println("{\"index\":\"" + index + 
                                     "\",\"userid\":\"" + userid +
                                     "\",\"name\":\"" + name +
                                     "\",\"description\":\"" + description +
-                                    "\",\"id\":\"" + id +
-                                    "\",\"contestname\":\"" + contestname +
                                     "\"};");
-                                }                
-                            }
-                            else
-                            {
-                                out.println("{\"index\":\"" + index + 
-                                "\",\"userid\":\"" + userid +
-                                "\",\"name\":\"" + name +
-                                "\",\"description\":\"" + description +
-                                "\"};");
+                                }
                             }
                         }
                     }
@@ -141,134 +144,137 @@ public class ExamineJudges extends HttpServlet {
                 else if(action.equals("request")) //用户申请
                 {
                     description = request.getParameter("description");
-                    /*userid = request.getSession.getAttribute("userid");*/
-                    userid = 1;
-                    level = 2;
-                    /*if(userid != null && request.getSession.getAttribute("level") == 1){*/
-                    if(type == 2)
+                    userid = Integer.parseInt(session.getAttribute("userid").toString());
+                    if(userid != -1 && Integer.parseInt(session.getAttribute("level").toString()) == 1)
                     {
-                        id = Integer.parseInt(request.getParameter("id"));
-                        sql = "SELECT * from examine where userid=? and type=? and id=?";
-                        pstmt = conn.prepareStatement(sql);
-                        pstmt.setInt(1,userid);
-                        pstmt.setInt(2,type);
-                        pstmt.setInt(3,id);
-                    }
-                    else
-                    {
-                        sql = "SELECT * from examine where userid=? and type=?";
-                        pstmt = conn.prepareStatement(sql);
-                        pstmt.setInt(1,userid);
-                        pstmt.setInt(2,type);
-                    }
-                    rs = pstmt.executeQuery(); 
-                    if(!rs.first())
-                    {
-                        if(type == 2 && level == 2)
+                        if(type == 2)
                         {
-                            sql = "INSERT INTO examine(userid,description,type,id) VALUES(?,?,?,?)";
+                            id = Integer.parseInt(request.getParameter("id"));
+                            sql = "SELECT * from examine where userid=? and type=? and id=?";
                             pstmt = conn.prepareStatement(sql);
                             pstmt.setInt(1,userid);
-                            pstmt.setString(2,description);
-                            pstmt.setInt(3,2);
-                            pstmt.setInt(4,id);
-                            pstmt.executeUpdate();
+                            pstmt.setInt(2,type);
+                            pstmt.setInt(3,id);
                         }
-                        else if(type == 1 && level == 1)
+                        else
                         {
-                            sql = "INSERT INTO examine(userid,description,type) VALUES(?,?,?);";
+                            sql = "SELECT * from examine where userid=? and type=?";
                             pstmt = conn.prepareStatement(sql);
                             pstmt.setInt(1,userid);
-                            pstmt.setString(2,description);
-                            pstmt.setInt(3,1);
-                            pstmt.executeUpdate();
+                            pstmt.setInt(2,type);
                         }
-                        out.println(1); //提交成功
+                        rs = pstmt.executeQuery(); 
+                        if(!rs.first())
+                        {
+                            if(type == 2 && level == 2)
+                            {
+                                sql = "INSERT INTO examine(userid,description,type,id) VALUES(?,?,?,?)";
+                                pstmt = conn.prepareStatement(sql);
+                                pstmt.setInt(1,userid);
+                                pstmt.setString(2,description);
+                                pstmt.setInt(3,2);
+                                pstmt.setInt(4,id);
+                                pstmt.executeUpdate();
+                            }
+                            else if(type == 1 && level == 1)
+                            {
+                                sql = "INSERT INTO examine(userid,description,type) VALUES(?,?,?);";
+                                pstmt = conn.prepareStatement(sql);
+                                pstmt.setInt(1,userid);
+                                pstmt.setString(2,description);
+                                pstmt.setInt(3,1);
+                                pstmt.executeUpdate();
+                            }
+                            else out.println(5); //错误提交
+                            out.println(1); //提交成功
+                        }
+                        else out.println(2); //已经提交
                     }
-                    else out.println(2); //已经提交
                 }
                 else if(action.equals("accept")) //审核申请
                 {
-                    /*if(session.getAttribute("level") == 3){*/
-                    index = Integer.parseInt(request.getParameter("index"));
-                    sql = "SELECT * FROM examine where index1=? and type=?";
-                    pstmt = conn.prepareStatement(sql);
-                    pstmt.setInt(1,index);
-                    pstmt.setInt(2,type);
-                    rs = pstmt.executeQuery();
-                    while(rs.next())
+                    if(Integer.parseInt(session.getAttribute("level").toString()) == 3)
                     {
-                        userid = rs.getInt("userid");
-                        String description2 = rs.getString("description");
-                        id = rs.getInt("id");
-                        if(description2 != "")
+                        index = Integer.parseInt(request.getParameter("index"));
+                        sql = "SELECT * FROM examine where index1=? and type=?";
+                        pstmt = conn.prepareStatement(sql);
+                        pstmt.setInt(1,index);
+                        pstmt.setInt(2,type);
+                        rs = pstmt.executeQuery();
+                        while(rs.next())
                         {
-                            String can = request.getParameter("can");
-                            if(can.equals("yes"))
+                            userid = rs.getInt("userid");
+                            String description2 = rs.getString("description");
+                            id = rs.getInt("id");
+                            if(description2 != "")
                             {
-                                if(type == 1)
+                                String can = request.getParameter("can");
+                                if(can.equals("yes"))
                                 {
-                                    sql = "UPDATE users SET level=2 where userid=?";
-                                    pstmt = conn.prepareStatement(sql);
-                                    pstmt.setInt(1,userid);
-                                    pstmt.executeUpdate();
-
-                                    sql = "INSERT INTO judge(userid) VALUES(?);";
-                                    pstmt = conn.prepareStatement(sql);
-                                    pstmt.setInt(1,userid);
-                                    pstmt.executeUpdate();
-                                }
-                                else
-                                {
-                                    sql = "SELECT partake from judge where userid=?";
-                                    pstmt = conn.prepareStatement(sql);
-                                    pstmt.setInt(1,userid);
-                                    rs = pstmt.executeQuery();
-                                    while(rs.next())
+                                    if(type == 1)
                                     {
-                                        partake = rs.getString("partake");
-                                        partake2 = partake + id + ",";
-                                        sql = "UPDATE judge SET partake=? where userid=?";
+                                        sql = "UPDATE users SET level=2 where userid=?";
                                         pstmt = conn.prepareStatement(sql);
-                                        pstmt.setString(1,partake2);
-                                        pstmt.setInt(2,userid);
+                                        pstmt.setInt(1,userid);
+                                        pstmt.executeUpdate();
+
+                                        sql = "INSERT INTO judge(userid) VALUES(?);";
+                                        pstmt = conn.prepareStatement(sql);
+                                        pstmt.setInt(1,userid);
                                         pstmt.executeUpdate();
                                     }
-
-                                    sql = "SELECT judgeid from contest where id=?";
-                                    pstmt = conn.prepareStatement(sql);
-                                    pstmt.setInt(1,id);
-                                    pstmt.executeQuery();
-                                    while(rs.next())
+                                    else
                                     {
-                                        String judgeid = rs.getString("judgeid");
-                                        String judgeid2 = judgeid + userid + ",";
-                                        sql = "UPDATE contest SET judgeid=? where id=?";
+                                        sql = "SELECT partake from judge where userid=?";
                                         pstmt = conn.prepareStatement(sql);
-                                        pstmt.setString(1,judgeid2);
-                                        pstmt.setInt(2,id);
+                                        pstmt.setInt(1,userid);
+                                        rs = pstmt.executeQuery();
+                                        while(rs.next())
+                                        {
+                                            partake = rs.getString("partake");
+                                            partake2 = partake + id + ",";
+                                            sql = "UPDATE judge SET partake=? where userid=?";
+                                            pstmt = conn.prepareStatement(sql);
+                                            pstmt.setString(1,partake2);
+                                            pstmt.setInt(2,userid);
+                                            pstmt.executeUpdate();
+                                        }
+
+                                        sql = "SELECT judgeid from contest where id=?";
+                                        pstmt = conn.prepareStatement(sql);
+                                        pstmt.setInt(1,id);
+                                        pstmt.executeQuery();
+                                        while(rs.next())
+                                        {
+                                            String judgeid = rs.getString("judgeid");
+                                            String judgeid2 = judgeid + userid + ",";
+                                            sql = "UPDATE contest SET judgeid=? where id=?";
+                                            pstmt = conn.prepareStatement(sql);
+                                            pstmt.setString(1,judgeid2);
+                                            pstmt.setInt(2,id);
+                                            pstmt.executeUpdate();
+                                        }
+
+                                        String contest = "contest" + id;
+                                        sql = "INSERT INTO " + contest + "(userid) VALUES(?)";
+                                        pstmt = conn.prepareStatement(sql);
+                                        pstmt.setInt(1,userid);
                                         pstmt.executeUpdate();
                                     }
-
-                                    String contest = "contest" + id;
-                                    sql = "INSERT INTO " + contest + "(userid) VALUES(?)";
-                                    pstmt = conn.prepareStatement(sql);
-                                    pstmt.setInt(1,userid);
-                                    pstmt.executeUpdate();
+                                    out.println(1); //通过审核
                                 }
-                                out.println(1); //通过审核
+                                else if(can.equals("no"))
+                                {
+                                    out.println(2); //拒绝通过
+                                } 
+                                sql = "DELETE FROM examine WHERE index1=? and type=?";
+                                pstmt = conn.prepareStatement(sql);
+                                pstmt.setInt(1,index);
+                                pstmt.setInt(2,type);
+                                pstmt.executeUpdate();   
                             }
-                            else if(can.equals("no"))
-                            {
-                                out.println(2); //拒绝通过
-                            } 
-                            sql = "DELETE FROM examine WHERE index1=? and type=?";
-                            pstmt = conn.prepareStatement(sql);
-                            pstmt.setInt(1,index);
-                            pstmt.setInt(2,type);
-                            pstmt.executeUpdate();   
+                            else out.println(3); //已经被处理
                         }
-                        else out.println(3); //已经被处理
                     }
                 }
             }

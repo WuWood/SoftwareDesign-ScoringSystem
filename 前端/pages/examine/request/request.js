@@ -14,7 +14,10 @@ Page({
       else var data = "description="+description+"&action=request&type=1";
       wx.request({
         url: 'http://127.0.0.1:8080/test/ExamineJudges',
-        header: {"Content-Type": "application/x-www-form-urlencoded"},
+        header: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          "Cookie": wx.getStorageSync('JSESSIONID')
+        },
         method: "POST",
         data: data,
         success: function (res) {
@@ -30,6 +33,13 @@ Page({
             case 2:
               wx.showToast({
                 title: '请勿重复提交',
+                icon: 'none',
+                duration: 2000,
+              });
+              break;
+            case 5:
+              wx.showToast({
+                title: '错误提交',
                 icon: 'none',
                 duration: 2000,
               });

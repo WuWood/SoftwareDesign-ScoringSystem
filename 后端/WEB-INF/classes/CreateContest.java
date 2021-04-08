@@ -7,6 +7,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -49,10 +50,9 @@ public class CreateContest extends HttpServlet {
             // 打开一个连接
             conn = DriverManager.getConnection(DB_URL,USER,PASS);
 
-            /*int level = Integer.parseInt(request.getSession.getAttribute("level"));*/
-            /*int userid = Integer.parseInt(request.getSession.getAttribute("userid"));*/
-            int level = 2;
-            int userid = 4;
+            HttpSession session = request.getSession();
+            int level = Integer.parseInt(session.getAttribute("level").toString());
+            int userid = Integer.parseInt(session.getAttribute("userid").toString());
             if(level >= 2)
             {
                 String name = request.getParameter("name");

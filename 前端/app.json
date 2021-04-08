@@ -1,5 +1,7 @@
 {
   "pages": [
+    "pages/index/index",
+    "pages/login/login-before",
     "pages/login/login/login",
     "pages/login/login-wx/login-wx",
     "pages/login/signup/signup",
@@ -15,7 +17,7 @@
   "window": {
     "backgroundTextStyle": "light",
     "navigationBarBackgroundColor": "#fff",
-    "navigationBarTitleText": "Weixin",
+    "navigationBarTitleText": "评分熊",
     "navigationBarTextStyle": "black"
   },
   "style": "v2",

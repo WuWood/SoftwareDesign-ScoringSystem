@@ -1,4 +1,4 @@
-/* pages/login/login.wxss */
+/* pages/login/login/login.wxss */
 .container {
   background-color:#ffffff;
   height: 100vh;

@@ -5,7 +5,10 @@ Page({
     var that = this;
     wx.request({
       url: 'http://127.0.0.1:8080/test/ExamineJudges',
-      header: {"Content-Type": "application/x-www-form-urlencoded"},
+      header: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        "Cookie": wx.getStorageSync('JSESSIONID')
+      },
       method: "POST",
       data: "action=accept&can=" + can + "&index=" + index + "&type=" + that.data.type,
       success:function(res)
@@ -75,7 +78,10 @@ Page({
     var that = this;
     wx.request({
       url: 'http://127.0.0.1:8080/test/ExamineJudges',
-      header: {"Content-Type": "application/x-www-form-urlencoded"},
+      header: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        "Cookie": wx.getStorageSync('JSESSIONID')
+      },
       method: "POST",
       data: "action=show&type=" + that.data.type,
       success: function (res) {
