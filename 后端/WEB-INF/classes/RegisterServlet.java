@@ -16,7 +16,7 @@ public class RegisterServlet extends HttpServlet {
 
     // 数据库的用户名与密码，需要根据自己的设置
     static final String USER = "root";
-    static final String PASS = "qertyiop1a";
+    static final String PASS = "";
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -41,43 +41,51 @@ public class RegisterServlet extends HttpServlet {
             //MD5加密
             String code = MD5Utils.stringToMD5(password);
 
-            String SelectSql = "select * from users where name=?;";
-            pstmt = conn.prepareStatement(SelectSql);
-            pstmt.setString(1,username);
-            ResultSet rs = pstmt.executeQuery();
-            if(!rs.first()) {
-                // 执行 SQL
-                String ReplaceSql = "insert into users(name,nickname,password,level) values(?,?,?,?);";
-                pstmt = conn.prepareStatement(ReplaceSql);
-                pstmt.setString(1,username);
-                pstmt.setString(2,nickname);
-                pstmt.setString(3,code);
-                pstmt.setInt(4,1);
-                int updateRows = pstmt.executeUpdate();
-                if(updateRows > 0){
-                    String SelectIdSql = "select userid from users where name=?;";
-                    pstmt = conn.prepareStatement(SelectIdSql);
-                    pstmt.setString(1,username);
-                    ResultSet SelectIdRs = pstmt.executeQuery();
-                    while (SelectIdRs.next())
-                    {
-                        request.getSession().setAttribute("userid", SelectIdRs.getString("userid"));
-                    }
-                    request.getSession().setAttribute("level", "1");
-                    out.write("1"); //1代表注册成功
-                    //完成后关闭
-                    SelectIdRs.close();
-                }else{
-                    out.write("2"); //2代表已经被人抢注
-                }
+            if(password==null)
+            {
+                out.write("5");//未输入密码
             }
             else
             {
-                out.write("3"); //3代表帐号已存在
+                String SelectSql = "select * from users where name=?;";
+                pstmt = conn.prepareStatement(SelectSql);
+                pstmt.setString(1,username);
+                ResultSet rs = pstmt.executeQuery();
+                if(!rs.first()) {
+                    // 执行 SQL
+                    String ReplaceSql = "insert into users(name,nickname,password,level) values(?,?,?,?);";
+                    pstmt = conn.prepareStatement(ReplaceSql);
+                    pstmt.setString(1,username);
+                    pstmt.setString(2,nickname);
+                    pstmt.setString(3,code);
+                    pstmt.setInt(4,1);
+                    int updateRows = pstmt.executeUpdate();
+                    if(updateRows > 0){
+                        String SelectIdSql = "select userid from users where name=?;";
+                        pstmt = conn.prepareStatement(SelectIdSql);
+                        pstmt.setString(1,username);
+                        ResultSet SelectIdRs = pstmt.executeQuery();
+                        while (SelectIdRs.next())
+                        {
+                            request.getSession().setAttribute("userid", SelectIdRs.getString("userid"));
+                        }
+                        request.getSession().setAttribute("level", "1");
+                        out.write("1"); //1代表注册成功
+                        //完成后关闭
+                        SelectIdRs.close();
+                    }else{
+                        out.write("2"); //2代表已经被人抢注
+                    }
+                }
+                else
+                {
+                    out.write("3"); //3代表帐号已存在
+                }
+                rs.close();
             }
 
+
 //             完成后关闭
-            rs.close();
             pstmt.close();
             conn.close();
         } catch(SQLException se) {

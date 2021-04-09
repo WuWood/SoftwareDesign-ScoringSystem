@@ -21,7 +21,7 @@ public class LoginServlet2 extends HttpServlet {
 
     // 数据库的用户名与密码，需要根据自己的设置
     static final String USER = "root";
-    static final String PASS = "qertyiop1a";
+    static final String PASS = "";
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -76,8 +76,7 @@ public class LoginServlet2 extends HttpServlet {
 
             if(WeChat.getErrcode()!=0)
             {
-                out.print("Errcode:"+WeChat.getErrcode()+"\n");
-                out.print("Errmsg:"+WeChat.getErrmsg()+"\n");
+                out.write("5");//code请求失败或无code
             }
             else
             {
@@ -104,11 +103,11 @@ public class LoginServlet2 extends HttpServlet {
                             request.getSession().setAttribute("userid", SelectIdRs.getString("userid"));
                         }
                         request.getSession().setAttribute("level", 1);
-                        out.write("3"); //1代表注册成功
+                        out.write("3"); //3代表注册成功
                         //完成后关闭
                         SelectIdRs.close();
                     }else{
-                        out.write("4"); //2代表已经被人抢注
+                        out.write("4"); //4代表注册失败
                     }
                 }
                 else
@@ -122,7 +121,7 @@ public class LoginServlet2 extends HttpServlet {
                         request.getSession().setAttribute("userid", SelectIdRs.getString("userid"));
                     }
                     request.getSession().setAttribute("level", 1);
-                    out.write("1"); //1代表注册成功
+                    out.write("1"); //1代表登录成功
                 }
                 rs.close();
             }
@@ -174,39 +173,41 @@ public class LoginServlet2 extends HttpServlet {
             String username = request.getParameter("username");
             String password = request.getParameter("password");
 
-            System.out.print(username);
-            System.out.print(password);
-            //MD5加密
-            String code = MD5Utils.stringToMD5(password);
-
-            // 执行 SQL 查询
-            String sql;
-            sql = "select * from users where name=?;";
-            pstmt = conn.prepareStatement(sql);
-            pstmt.setString(1,username);
-            ResultSet rs = pstmt.executeQuery();
-
-            while(rs.next()) {
-                // 通过字段检索
-                if (rs.getString("password").equals(code)) {
-                    request.getSession().setAttribute("userid", rs.getString("userid"));
-                    request.getSession().setAttribute("level", rs.getString("level"));
-                    out.write("1");
-                    IsLogin=true;
-                    break;
-                }
-            }
-
-            if(IsLogin==false)
+            if(password==null)
             {
-                out.write("2");
+                out.write("5");//未输入密码
+            }
+            else
+            {
+                //MD5加密
+                String code = MD5Utils.stringToMD5(password);
+                // 执行 SQL 查询
+                String sql;
+                sql = "select * from users where name=?;";
+                pstmt = conn.prepareStatement(sql);
+                pstmt.setString(1,username);
+                ResultSet rs = pstmt.executeQuery();
+
+                while(rs.next()) {
+                    // 通过字段检索
+                    if (rs.getString("password").equals(code)) {
+                        request.getSession().setAttribute("userid", rs.getString("userid"));
+                        request.getSession().setAttribute("level", rs.getString("level"));
+                        out.write("1");
+                        IsLogin=true;
+                        break;
+                    }
+                }
+
+                if(IsLogin==false)
+                {
+                    out.write("2");
+                }
+                rs.close();
+                pstmt.close();
             }
 
             // 完成后关闭
-            System.out.print(request.getSession().getAttribute("userid"));
-            System.out.print(request.getSession().getAttribute("level"));
-            rs.close();
-            pstmt.close();
             conn.close();
         } catch(SQLException se) {
             // 处理 JDBC 错误

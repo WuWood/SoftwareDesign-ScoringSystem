@@ -11,10 +11,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.*;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.Vector;
+import java.util.*;
 
 @WebServlet("/ScoreServlet")
 public class ScoreServlet extends HttpServlet {
@@ -25,10 +22,40 @@ public class ScoreServlet extends HttpServlet {
 
     // 数据库的用户名与密码，需要根据自己的设置
     static final String USER = "root";
-    static final String PASS = "qertyiop1a";
+    static final String PASS = "";
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String method = request.getParameter("method");
+        if (method.equals( "Add") && method != null) {
+            this.Add(request, response);
+        }else if (method.equals( "Query") && method != null) {
+            this.Query(request, response);
+        }
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        doGet(req, resp);
+    }
+
+    public  String getRequestPayload(HttpServletRequest req) {
+        StringBuilder sb = new StringBuilder();
+        try(BufferedReader reader = req.getReader()) {
+            char[]buff = new char[1024];
+            int len;
+            while((len = reader.read(buff)) != -1) {
+                sb.append(buff,0, len);
+            }
+        }catch (IOException e) {
+            e.printStackTrace();
+        }
+        return sb.toString();
+    }
+
+    private void Add(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException
+    {
         Connection conn = null;
         PreparedStatement pstmt = null;
 
@@ -70,7 +97,7 @@ public class ScoreServlet extends HttpServlet {
             ResultSet rs = pstmt.executeQuery();
             while (rs.next()) {
                 if(!rs.getString("COLUMN_NAME").equals("userid"))
-                vec.add(rs.getString("COLUMN_NAME"));
+                    vec.add(rs.getString("COLUMN_NAME"));
 //                String column_name = rs.getString("COLUMN_NAME");
             }
 
@@ -188,22 +215,106 @@ public class ScoreServlet extends HttpServlet {
         }
     }
 
-    @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        doGet(req, resp);
-    }
+    private void Query(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException
+    {
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        // 设置响应内容类型
+        response.setContentType("text/html;charset=utf-8");
+        PrintWriter out = response.getWriter();
+        try {
+            // 注册 JDBC 驱动器
+            Class.forName(JDBC_DRIVER);
+            // 打开一个连接
+            conn = DriverManager.getConnection(DB_URL, USER, PASS);
 
-    public  String getRequestPayload(HttpServletRequest req) {
-        StringBuilder sb = new StringBuilder();
-        try(BufferedReader reader = req.getReader()) {
-            char[]buff = new char[1024];
-            int len;
-            while((len = reader.read(buff)) != -1) {
-                sb.append(buff,0, len);
+            //获取session
+//            HttpSession session = request.getSession();
+//            int level = (int) session.getAttribute("level");
+//            int userid = (int) session.getAttribute(" userid");
+            String JudgeId = request.getParameter("JudgeId");
+            String ContestId = request.getParameter("ContestId");
+
+            //map
+            Map<String,String> map=new HashMap<>();
+
+            //检索对应的judgeid的比赛
+            String judge="SELECT partake from judge where userid=?";
+            pstmt = conn.prepareStatement(judge);
+            pstmt.setInt(1,Integer.parseInt(JudgeId));
+            ResultSet judgers = pstmt.executeQuery();
+            while(judgers.next())
+            {
+                String partake = judgers.getString("partake");
+                String[] tokenp = partake.split(",");
+                for (int p=0; p < tokenp.length; p++)
+                {
+                    String contestid;
+                    contestid = "SELECT * FROM contest where id=? ";
+                    pstmt = conn.prepareStatement(contestid);
+                    pstmt.setInt(1,Integer.parseInt(tokenp[p]));
+                    ResultSet contest=pstmt.executeQuery();
+                    while (contest.next())
+                    {
+                        String id= contest.getString("id");
+                        if ( ContestId.equals(id))
+                        {
+                            String getuserid="SElECT userid from contest where id=?";
+                            pstmt = conn.prepareStatement(getuserid);
+                            pstmt.setInt(1,Integer.parseInt(id));
+                            ResultSet contest1=pstmt.executeQuery();
+                            while(contest1.next())
+                            {
+                                String userid=contest.getString("userid");
+                                String[] tokenu = userid.split(",");
+                                for(int a=0;a<tokenu.length;a++)
+                                {
+                                    String users="SELECT * from users where userid=?";
+                                    pstmt = conn.prepareStatement(users);
+                                    pstmt.setInt(1,Integer.parseInt(tokenu[a]));
+                                    ResultSet  usrs = pstmt.executeQuery();
+                                    while (usrs.next())
+                                    {
+                                        String name=usrs.getString("nickname");
+                                        map.put(tokenu[a],name);
+                                    }
+                                    usrs.close();
+                                }
+                            }
+                            contest1.close();
+                        }
+                    }
+                    contest.close();
+                }
             }
-        }catch (IOException e) {
+            Gson gson = new Gson();
+            String userJson = gson.toJson(map);
+            out.print(userJson);
+//            处理完关闭
+            judgers.close();
+            pstmt.close();
+            conn.close();
+        } catch(SQLException se) {
+            // 处理 JDBC 错误
+
+            se.printStackTrace();
+        } catch(Exception e) {
+            // 处理 Class.forName 错误
             e.printStackTrace();
+        }finally{
+            // 最后是用于关闭资源的块
+            try{
+                if(pstmt!=null)
+                    pstmt.close();
+            }catch(SQLException se2){
+            }
+            try{
+                if(conn!=null)
+                    conn.close();
+            }catch(SQLException se){
+                se.printStackTrace();
+            }
         }
-        return sb.toString();
     }
 }
