@@ -1,6 +1,7 @@
 // pages/personal/personal.js
-Page({
+const app = getApp();
 
+Page({
   /**
    * 页面的初始数据
    */
@@ -13,6 +14,7 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
+    app.Check();
     var that = this;
     wx.request({
       url: 'http://127.0.0.1:8080/test/ShowPersonal',

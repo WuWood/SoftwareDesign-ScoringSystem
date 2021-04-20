@@ -1,4 +1,6 @@
 // pages/examine/accept/accept.js
+const app = getApp();
+
 Page({
   Accept:function(can,index)
   {
@@ -75,6 +77,7 @@ Page({
   },
 
   GetInfo:function(){
+    app.Check();
     var that = this;
     wx.request({
       url: 'http://127.0.0.1:8080/test/ExamineJudges',
