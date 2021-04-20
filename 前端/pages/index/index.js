@@ -50,5 +50,10 @@ Page({
       userInfo: e.detail.userInfo,
       hasUserInfo: true
     })
+  },
+  OnClick: function() {
+    wx.navigateTo({
+      url: "/pages/login/login-before",
+    })
   }
 })

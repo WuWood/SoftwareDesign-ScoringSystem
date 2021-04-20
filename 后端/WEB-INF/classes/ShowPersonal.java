@@ -7,6 +7,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
  * Servlet implementation class ShowPersonal
@@ -45,7 +46,7 @@ public class ShowPersonal extends HttpServlet {
             // 打开一个连接
             conn = DriverManager.getConnection(DB_URL,USER,PASS);
 
-            int userid = 1;
+            int userid = Integer.parseInt(request.getSession().getAttribute("userid").toString());
 
             // 执行 SQL 查询
             String sql;
@@ -55,13 +56,8 @@ public class ShowPersonal extends HttpServlet {
             ResultSet rs = pstmt.executeQuery();
 
             while(rs.next()){
-                String [] partake = rs.getString("partake").split(";");
-                String partake2 = "";
-                for(String name : partake){
-                    if(name == "") break;
-                    partake2 = partake2 + name + ",";
-                }
-                partake2 = partake2.substring(0,partake2.length()-1);
+                String partake = rs.getString("partake");
+                String partake2 = partake.substring(0,partake.length()-1);
                 
                 sql = "SELECT id,name,description from contest where FIND_IN_SET(id,?);";
                 pstmt = conn.prepareStatement(sql);

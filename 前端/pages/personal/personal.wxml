@@ -4,4 +4,4 @@
   <!--tap事件能注册在view上，但不能注册在block、template上-->
     <template is="showItemTpl" data="{{...item}}"></template>
 </block>  
-
+<text class = "text1" wx:if = "{{none == true}}">暂无参加\n比赛</text>  
