@@ -1,0 +1,56 @@
+<!--pages/demo1/demo1.wxml-->
+<form bindsubmit="formSubmit" bindreset="formReset">
+  <view class="name Left" style="">
+    <view class="title_1 lineHeight" style="position: relative; left: -6rpx; top: 6rpx">比赛名称</view>
+    <view class="text_1 lineHeight" style="">
+      <input style="position: relative; left: -6rpx; top: 29rpx; width: 462rpx; height: 44rpx; display: block; box-sizing: border-box"   placeholder="请输入比赛名称" />
+    </view>
+  </view>
+
+  <view class="describe Left" style="">
+    <view  style="position: relative; left: -6rpx; top: -110rpx; width: 458rpx; height: 44rpx; display: block; box-sizing: border-box;">
+      <textarea placeholder="请输入对该比赛的描述" style="width: 458rpx;">
+    </textarea>
+    </view>
+  </view>
+
+  <view class="number Left">
+    <view class="title_2 lineHeight" style="position: relative; left: -6rpx; top: -67rpx">最大参赛人数</view>
+    <input style="position: relative; left: -6rpx; top: -44rpx; width: 456rpx; height: 42rpx; display: block; box-sizing: border-box"   class="lineHeight"  placeholder="请输入最大参赛人数" />
+  </view>
+
+</form>
+
+<view class="startTime Left">
+  <view class="lineHeight1"  style="position: relative; left: -6rpx; top: -32rpx">开始报名时间</view>
+    <picker mode="date" bindchange="bindMultiPickerChange">
+    <input style="width: 458rpx; height: 44rpx; display: block; box-sizing: border-box; left: -6rpx; top: -22rpx; position: relative;color:#000"  class="lineHeight" disabled="true" value='{{time}}' placeholder='选择开始时间' />
+  </picker>
+  </view>
+
+<view class="deadline">
+  <view class="lineHeight2" style="position: relative; left: 142rpx; top: 35rpx">截止报名时间</view>
+    <picker mode="date" bindchange="bindMultiPickerChange1">
+    <input style="position: relative; left: 142rpx; top: 55rpx; width: 462rpx; height: 44rpx; display: block; box-sizing: border-box;color:#000"  class="lineHeight2" disabled="true" value='{{time1}}' placeholder='选择截止时间' />
+  </picker>
+</view>
+
+<view>
+  <view class="bigBasket_1" style="width: 526rpx; height: 144rpx; display: block; box-sizing: border-box; left: 113rpx; top: -864rpx; position: relative"> </view>
+  <view class="smBasket_1" style="position: relative; left: 128rpx; top: -947rpx; width: 494rpx; height: 66rpx; display: block; box-sizing: border-box"> </view>
+
+  <view class="bigBasket_1" style="width: 526rpx; height: 144rpx; display: block; box-sizing: border-box; left: 113rpx; top: -440rpx; position: relative"> </view>
+  <view class="smBasket_1" style="position: relative; left: 128rpx; top: -520rpx; width: 494rpx; height: 66rpx; display: block; box-sizing: border-box"> </view>
+
+  <view class="bigBasket_1" style="width: 526rpx; height: 144rpx; display: block; box-sizing: border-box; left: 113rpx; top: -816rpx; position: relative"> </view>
+  <view class="smBasket_1" style="position: relative; left: 128rpx; top: -897rpx; width: 494rpx; height: 66rpx; display: block; box-sizing: border-box"> </view>
+
+</view>
+
+<view>
+  <view class="bigBasket_2" style="position: relative; left: 110rpx; top: -1330rpx; width: 526rpx; height: 284rpx; display: block; box-sizing: border-box"> </view>
+  <view class="smBasket_2" style="position: relative; left: 127rpx; top: -1596rpx; width: 494rpx; height: 250rpx; display: block; box-sizing: border-box"> </view>
+</view>
+
+<view class="bigBasket_1" style="width: 526rpx; height: 144rpx; display: block; box-sizing: border-box; left: 113rpx; top: -1228rpx; position: relative"> </view>
+<view class="smBasket_1" style="position: relative; left: 128rpx; top: -1308rpx; width: 494rpx; height: 66rpx; display: block; box-sizing: border-box"> </view>
