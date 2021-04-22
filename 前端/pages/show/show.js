@@ -62,7 +62,7 @@ Page({
     else
     {
       wx.request({
-        url: 'http://127.0.0.1:8080/test/JoinContest',
+        url: domain + "/JoinContest",
         data: "id="+id,
         method: "POST",
         header:{
