@@ -19,8 +19,8 @@ import java.util.Date;
 public class JoinContest extends HttpServlet {
     private static final long serialVersionUID = 1L;
     // JDBC 驱动名及数据库 URL
-    static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";  
-    static final String DB_URL = "jdbc:mysql://localhost:3306/bearcome?useUnicode=true&characterEncoding=UTF-8&userSSL=false&serverTimezone=GMT%2B8";
+    static final String JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";  
+    static final String DB_URL = "jdbc:mysql://localhost:3306/bearcome?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=GMT%2B8";
     
     // 数据库的用户名与密码，需要根据自己的设置
     static final String USER = "root";
@@ -59,6 +59,8 @@ public class JoinContest extends HttpServlet {
 
                 // 执行 SQL 查询
                 String sql;
+                String partake;
+                String partake2 = "";
                 sql = "SELECT * FROM contest where id=?;";
                 pstmt = conn.prepareStatement(sql);
                 pstmt.setInt(1,id);
@@ -72,7 +74,7 @@ public class JoinContest extends HttpServlet {
                     Date endtime = rs.getTimestamp("endtime");
                     int currentmembers = rs.getInt("currentmembers");
                     int maxmembers = rs.getInt("maxmembers");
-                    String contestuser = rs.getString("userid");
+                    String contestuser = (rs.getString("userid") != null)?rs.getString("userid"):"";
 
                     if(time.getTime() >= starttime.getTime() && time.getTime() <= endtime.getTime() && currentmembers < maxmembers)
                     {
@@ -81,40 +83,59 @@ public class JoinContest extends HttpServlet {
                         pstmt.setInt(1,userid);
                         rs = pstmt.executeQuery();
                         int Flag = 1;
-                        while(rs.next())
+                        if(rs.first())
                         {
-                            String [] partake = rs.getString("partake").split(";");
-                            for(String name : partake){
-                                if(name == "") break;
-                                if(Integer.parseInt(name) == id) Flag = 0;
-                            }
-                            if(Flag == 1)
+                            while(rs.next())
                             {
-
-                                sql = "UPDATE contest set currentmembers=(currentmembers+1) where id=?;";
+                                partake = rs.getString("partake");
+                                partake2 = partake.substring(0,partake.length() - 1);
+                                sql = "SELECT * from competitor where FIND_IN_SET(?,?)";
                                 pstmt = conn.prepareStatement(sql);
-                                pstmt.setInt(1,id);
-                                pstmt.executeUpdate();
-                                
-                                sql = "UPDATE contest set userid=? where id=?;";
-                                pstmt = conn.prepareStatement(sql);
-                                String userid2 = contestuser + Integer.toString(userid)+";";
-                                pstmt.setString(1,userid2);
-                                pstmt.setInt(2,id);
-                                pstmt.executeUpdate();                               
-
-                                sql = "REPLACE competitor set partake=? where userid=?;";
-                                pstmt = conn.prepareStatement(sql);
-                                String id2 = rs.getString("partake") + Integer.toString(id)+";";
-                                pstmt.setString(1,id2);
-                                pstmt.setInt(2,userid);
-                                pstmt.executeUpdate();
-
-                                out.println(1); //加入成功
+                                pstmt.setString(1,contestuser);
+                                pstmt.setString(2,partake2);
+                                rs = pstmt.executeQuery();
+                                if(rs.first())
+                                {
+                                    Flag = 0;
+                                    out.println(2); //已经加入
+                                }
+                                else Flag = 2;
                             }
-                            else out.println(2); //已经加入
                         }
-                    }else out.println(3); //无法加入
+                        if(Flag > 0)
+                        {
+                            sql = "UPDATE contest set currentmembers=(currentmembers+1) where id=?;";
+                            pstmt = conn.prepareStatement(sql);
+                            pstmt.setInt(1,id);
+                            pstmt.executeUpdate();
+                            
+                            sql = "UPDATE contest set userid=? where id=?;";
+                            pstmt = conn.prepareStatement(sql);
+                            String userid2 = contestuser + Integer.toString(userid)+",";
+                            pstmt.setString(1,userid2);
+                            pstmt.setInt(2,id);
+                            pstmt.executeUpdate();
+
+                            sql = "REPLACE INTO competitor set partake=?,userid=?;";
+                            pstmt = conn.prepareStatement(sql);
+                            if(Flag == 2)
+                            {
+                                partake2 = partake2 + ",";
+                                pstmt.setString(1,partake2);
+                                
+                            }
+                            else if(Flag == 1)
+                            {
+                                String id2 = id + ",";
+                                pstmt.setString(1,id2);
+                            }
+                            pstmt.setInt(2,userid);
+                            pstmt.executeUpdate();
+
+                            out.println(1); //加入成功
+                        }
+                    }
+                    else out.println(3); //无法加入
                 }
             }
             // 完成后关闭

@@ -4,6 +4,8 @@
     <text>ID：{{id}}\n</text>
     <text>名称：{{name}}\n</text>
     <text>描述：{{description}}\n</text>
+    <view wx:if="{{score}}">
+      <text>分数：{{score}}\n</text>
+    </view>
   </view>
 </template>
-

@@ -16,8 +16,8 @@ import javax.servlet.http.HttpSession;
 public class ShowPersonal extends HttpServlet {
     private static final long serialVersionUID = 1L;
     // JDBC 驱动名及数据库 URL
-    static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";  
-    static final String DB_URL = "jdbc:mysql://localhost:3306/bearcome?useUnicode=true&characterEncoding=UTF-8&userSSL=false&serverTimezone=GMT%2B8";
+    static final String JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";  
+    static final String DB_URL = "jdbc:mysql://localhost:3306/bearcome?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=GMT%2B8";
     
     // 数据库的用户名与密码，需要根据自己的设置
     static final String USER = "root";
@@ -47,10 +47,20 @@ public class ShowPersonal extends HttpServlet {
             conn = DriverManager.getConnection(DB_URL,USER,PASS);
 
             int userid = Integer.parseInt(request.getSession().getAttribute("userid").toString());
+            int level = Integer.parseInt(request.getSession().getAttribute("level").toString());
 
-            // 执行 SQL 查询
             String sql;
-            sql = "SELECT partake FROM competitor where userid=?";
+            String score = null;
+            sql = "";
+            if(level == 1)
+            {
+                sql = "SELECT partake FROM competitor where userid=?";
+            }
+            else if(level == 2)
+            {
+                sql = "SELECT GROUP_CONCAT(partake,createpartake) AS partake FROM judge where userid=?;";
+            }
+            // 执行 SQL 查询
             pstmt = conn.prepareStatement(sql);
             pstmt.setInt(1,userid);
             ResultSet rs = pstmt.executeQuery();
@@ -69,10 +79,35 @@ public class ShowPersonal extends HttpServlet {
                     String name = rs.getString("name");
                     String description = rs.getString("description");
 
-                    out.println("{\"id\":\"" + id +
-                    "\",\"name\":\"" + name +
-                    "\",\"description\":\"" + description +
-                    "\"};");
+                    if(level == 1)
+                    {
+                        String id2 = "$." + id;
+                        sql = "SELECT JSON_EXTRACT(`score`," + id2 + ") AS score;";
+
+                        if(rs.first())
+                        {
+                            while(rs.next())
+                            {
+                                score = rs.getString("score");
+                            }
+                        }
+
+                    }
+                    if(score != null)
+                    {
+                        out.println("{\"id\":\"" + id +
+                        "\",\"name\":\"" + name +
+                        "\",\"description\":\"" + description +
+                        "\",\"score\":\"" + score +
+                        "\"};");
+                    }
+                    else
+                    {
+                        out.println("{\"id\":\"" + id +
+                        "\",\"name\":\"" + name +
+                        "\",\"description\":\"" + description +
+                        "\"};");
+                    }
                 }
             }
 

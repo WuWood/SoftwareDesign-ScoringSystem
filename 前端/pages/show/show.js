@@ -55,14 +55,42 @@ Page({
     var that = this;
     if(that.data.judge == true)
     {
-      wx.navigateTo({
-        url: '../examine/request/request?id=' + id,
+      wx.request({
+        url: domain + '/ShowContest',
+        data: "id="+id,
+        method: "POST",
+        header:{
+          "Content-Type": "application/x-www-form-urlencoded",
+          "Cookie": wx.getStorageSync('JSESSIONID')
+        },
+        success: function (res) {
+          console.log(res.data);
+          that.GetInfo();
+          switch (res.data){
+            case 1:
+              wx.navigateTo({
+                url: '../examine/request/request?id=' + id,
+              });
+              break;
+            case 2:
+              wx.showToast({
+                title: '已加入该比赛', //弹框内容
+                icon: 'none',  //弹框模式
+                duration: 2000    //弹框显示时间
+              });
+              break;
+            default:
+              break;
+          }
+        },
+        fail: function(res){
+        },
       });
     }
     else
     {
       wx.request({
-        url: 'http://127.0.0.1:8080/test/JoinContest',
+        url: domain + '/JoinContest',
         data: "id="+id,
         method: "POST",
         header:{
