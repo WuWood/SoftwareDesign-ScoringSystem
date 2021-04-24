@@ -5,52 +5,20 @@ const domain = app.globalData.domain;
 
 Page({
   data: {
-    userInfo: {},
-    hasUserInfo: false,
-    motto: "将使用微信账户进行登录"
-  },
-
-  // 事件处理函数
-  bindViewTap() {
-    wx.navigateTo({
-      url: '../logs/logs'
-    })
+    motto: "将使用微信账户进行登录",
+    userInfo: {}
   },
   
   onLoad() {
-    if (app.globalData.userInfo) {
-      this.setData({
-        userInfo: app.globalData.userInfo,
-        hasUserInfo: true
-      })
-    } else if (this.data.canIUse) {
-      // 由于 getUserInfo 是网络请求，可能会在 Page.onLoad 之后才返回
-      // 所以此处加入 callback 以防止这种情况
-      app.userInfoReadyCallback = res => {
-        this.setData({
-          userInfo: res.userInfo,
-          hasUserInfo: true
-        })
-      }
-    } else {
-      // 在没有 open-type=getUserInfo 版本的兼容处理
-      wx.getUserInfo({
-        success: res => {
-          app.globalData.userInfo = res.userInfo
-          this.setData({
-            userInfo: res.userInfo,
-            hasUserInfo: true
-          })
-        }
-      })
-    }
-
+    let userInfo = wx.getStorageSync('userInfo');
+    
     // 设定页面问候语
     this.setData({
-      motto: "将使用微信账户 " + app.globalData.userInfo.nickName + " 进行登录"
+      motto: "将使用 " + userInfo.nickName + " 进行登录",
+      userInfo: userInfo
     })
-    
   },
+
 
   /*微信登录事件*/
   create_login_wx: function (e) {
@@ -58,14 +26,16 @@ Page({
       success (res) {
         if (res.code) {
           
-          console.log(app.globalData.userInfo.nickName);
+          let userInfo = wx.getStorageSync('userInfo');
+          
+          console.log(userInfo.nickName);
           console.log(res.code);
 
           // 发起微信登录请求
           wx.request({
             url: domain + "/LoginServlet2",
             data: {
-              nickname: app.globalData.userInfo.nickName,
+              nickname: userInfo.nickName,
               code: res.code,
               method: "WeChatLogin"
             },
@@ -83,9 +53,9 @@ Page({
           
               // Cookies
               if (res && res.header && res.header['Set-Cookie']) {
-                wx.setStorageSync('cookieKey', res.header['Set-Cookie']); //保存Cookie到Storage
+                wx.setStorageSync('JSESSIONID', res.header['Set-Cookie']); //保存Cookie到Storage
               }
-              let cookie = wx.getStorageSync('cookieKey'); //取出Cookie
+              let cookie = wx.getStorageSync('JSESSIONID'); //取出Cookie
               let header = { 'Content-Type': 'application/x-www-form-urlencoded'};
               if (cookie) {
                   header.Cookie = cookie;
@@ -96,11 +66,11 @@ Page({
               if (res.data == "1" || res.data == "3") {
                 wx.showToast({
                   title: "微信登录成功",
-                  duration: 2000
+                  duration: 1000
                 })
                 setTimeout(function () {
-                  wx.navigateBack({
-                    delta: 2 //返回上一页再返回上一页（返回到主页）
+                  wx.reLaunch({
+                    url: "/pages/index/index" // 关闭所有页面并打开主页
                   })
                 }, 1000)
               }

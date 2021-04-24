@@ -90,7 +90,7 @@ Page({
     else
     {
       wx.request({
-        url: domain + '/JoinContest',
+        url: domain + "/JoinContest",
         data: "id="+id,
         method: "POST",
         header:{

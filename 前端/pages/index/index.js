@@ -3,52 +3,106 @@
 const app = getApp()
 
 Page({
+  
+  /**
+   * 页面的初始数据
+   */
   data: {
-    motto: 'Hello World',
-    userInfo: {},
-    hasUserInfo: false,
-    canIUse: wx.canIUse('button.open-type.getUserInfo')
+    onLine: false,
+    nickName: "请点击头像登录",
+    avatar: "https://thirdwx.qlogo.cn/mmopen/vi_32/POgEwh4mIHO4nibH0KlMECNjjGxQUq24ZEaGT4poC6icRiccVGKSyXwibcPq4BWmiaIGuG1icwxaQX6grC9VemZoJ8rg/132"
   },
+
   // 事件处理函数
   bindViewTap() {
     wx.navigateTo({
       url: '../logs/logs'
     })
   },
+
+  /**
+   * 生命周期函数--监听页面加载
+   */
   onLoad() {
-    if (app.globalData.userInfo) {
+    
+    // 有Cookie则设为在线状态
+    if (wx.getStorageSync('JSESSIONID') != "") {
       this.setData({
-        userInfo: app.globalData.userInfo,
-        hasUserInfo: true
+        onLine: true,
       })
-    } else if (this.data.canIUse) {
-      // 由于 getUserInfo 是网络请求，可能会在 Page.onLoad 之后才返回
-      // 所以此处加入 callback 以防止这种情况
-      app.userInfoReadyCallback = res => {
+
+      // 使用微信登录，则获取微信帐号的昵称、头像
+      if (wx.getStorageSync('userInfo') != "") {
+        let userInfo = wx.getStorageSync('userInfo');
+        
         this.setData({
-          userInfo: res.userInfo,
-          hasUserInfo: true
+          nickName: userInfo.nickName,
+          avatar: userInfo.avatarUrl
         })
       }
-    } else {
-      // 在没有 open-type=getUserInfo 版本的兼容处理
-      wx.getUserInfo({
-        success: res => {
-          app.globalData.userInfo = res.userInfo
-          this.setData({
-            userInfo: res.userInfo,
-            hasUserInfo: true
-          })
-        }
-      })
+      // 使用传统登录，则获取用户名，并使用默认头像
+      else {
+        this.setData({
+          nickName: wx.getStorageSync('username'),
+        })
+      }
+    }
+
+  },
+
+  /**
+   * 用户点击右上角分享
+   */
+  onShareAppMessage: function () {
+    return {
+      title: "评分熊",
+      path: "/pages/index/index",
+      imageUrl: "/image/card.png",
+      success: function (res) {
+            console.log(res)
+      }
     }
   },
-  getUserInfo(e) {
-    console.log(e)
-    app.globalData.userInfo = e.detail.userInfo
-    this.setData({
-      userInfo: e.detail.userInfo,
-      hasUserInfo: true
+  onShareTimeline: function () {
+    return {
+      title: "评分熊",
+      path: "/pages/index/index",
+      success: function (res) {
+            console.log(res)
+      }
+    }
+  },
+
+
+  /*按钮事件 - 打开登录面板*/
+  ToLogin: function() {
+    wx.navigateTo({
+      url: "/pages/login/login-before",
     })
-  }
+  },
+
+  /*按钮事件 - 退出账户*/
+  LogOut: function() {
+    wx.showModal({
+      title: "是否退出当前账号？",
+      success (res) {
+        if (res.confirm) {
+          wx.clearStorageSync(); // 清除Storage
+          wx.reLaunch({
+            url: "/pages/index/index" // 重新加载主页
+          })
+        } else if (res.cancel) {
+          console.log('用户点击取消')
+        }
+      }
+    })
+  },
+
+  /*按钮事件 - 打开参赛页*/
+  NavToShow: function() {
+    wx.navigateTo({
+      url: "/pages/show/show",
+    })
+  },
+  
 })

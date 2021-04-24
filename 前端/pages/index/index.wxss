@@ -31,7 +31,7 @@ image {
   padding: 30rpx 0;
 }
 
-.header .content image {
+.header .content .userinfo-avatar {
   width: 150rpx;
   height: 150rpx;
   border-radius: 50%;
@@ -51,7 +51,7 @@ image {
   border-radius: 0;
 }
 
-.header .content .title {
+.header .content .userinfo-nickname {
   font-size: 30rpx;
   color: #fff
 }
