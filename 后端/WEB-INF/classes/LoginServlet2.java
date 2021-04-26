@@ -22,7 +22,7 @@ public class LoginServlet2 extends HttpServlet {
 
     // 数据库的用户名与密码，需要根据自己的设置
     static final String USER = "root";
-    static final String PASS = "qertyiop1a";
+    static final String PASS = "";
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
