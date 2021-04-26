@@ -23,7 +23,7 @@ public class QueryScore extends HttpServlet{
 
     // 数据库的用户名与密码，需要根据自己的设置
     static final String USER = "root";
-    static final String PASS = "qertyiop1a";
+    static final String PASS = "";
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
