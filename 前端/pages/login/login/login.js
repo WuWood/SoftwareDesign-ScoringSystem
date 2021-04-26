@@ -106,7 +106,7 @@ Page({
     console.log(cookie)
 
     // 页面交互逻辑
-    if (res.data == "1") {
+    if (res.data == "11" || res.data == "12") {
       wx.showToast({
         title: "登录成功",
         duration: 1000
@@ -115,13 +115,20 @@ Page({
         wx.reLaunch({
           url: "/pages/index/index" // 关闭所有页面并打开主页
         })
-
-        // wx.navigateTo({
-        //   url: '../../show/show',
-        // })
       }, 1000)
     }
-    else if(res.data == "2") {
+    else if (res.data == "13") {
+      wx.showToast({
+        title: "管理员登录成功",
+        duration: 1000
+      })
+      setTimeout(function () {
+        wx.redirectTo({
+          url: "/pages/accept/accept" // 管理员登录后直接进入accept页
+        })
+      }, 1000)
+    }
+    else if (res.data == "2") {
       wx.showToast({
         title: "账号或密码错误",
         icon: 'none',
