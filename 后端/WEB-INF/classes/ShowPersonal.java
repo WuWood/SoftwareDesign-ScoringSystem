@@ -51,6 +51,7 @@ public class ShowPersonal extends HttpServlet {
 
             String sql;
             String score = null;
+            String rank = null;
             sql = "";
             if(level == 1)
             {
@@ -78,7 +79,7 @@ public class ShowPersonal extends HttpServlet {
                     String id  = rs.getString("id");
                     String name = rs.getString("name");
                     String description = rs.getString("description");
-
+                    /*这里获取平均分和排名
                     if(level == 1)
                     {
                         String id2 = "$." + id;
@@ -89,16 +90,18 @@ public class ShowPersonal extends HttpServlet {
                             while(rs.next())
                             {
                                 score = rs.getString("score");
+                                rank = rs.getString("rank");
                             }
                         }
 
-                    }
+                    }*/
                     if(score != null)
                     {
                         out.println("{\"id\":\"" + id +
                         "\",\"name\":\"" + name +
                         "\",\"description\":\"" + description +
                         "\",\"score\":\"" + score +
+                        "\",\"rank\":\"" + rank +
                         "\"};");
                     }
                     else
@@ -110,6 +113,10 @@ public class ShowPersonal extends HttpServlet {
                     }
                 }
             }
+            if(level > 1)
+            {
+                out.println("isJudge");
+            }           
 
             // 完成后关闭
             rs.close();

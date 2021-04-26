@@ -8,6 +8,60 @@ Page({
   data: {
     list: [],
     none: false,
+    judge: false,
+  },
+
+  Lock:function(event)
+  {
+    var id = event.currentTarget.dataset.id;
+    var lock = event.currentTarget.dataset.lock;
+    var that = this;
+    wx.request({
+      url: domain + "/LockJudges",
+      data:{
+        "ContestName":"contest" + id,
+        "Lock":lock,
+        "Cookie": wx.getStorageSync('JSESSIONID'),
+      },
+      method: 'POST',
+      header: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      success: function (res) {
+          switch (res.data){
+            case 1:
+              wx.showToast({
+                title: '评委锁定',
+                icon: 'success',
+                duration: 2000,
+              });             
+              break;
+            case 2:
+              wx.showToast({
+                title: '锁定失败',
+                icon: 'none',
+                duration: 2000,
+              });
+              break;
+            case 3:
+              wx.showToast({
+                title: '参赛者锁定',
+                icon: 'success',
+                duration: 2000,
+              });
+              break;
+            case 4:
+              wx.showToast({
+                title: '锁定失败',
+                icon: 'none',
+                duration: 2000,
+              });
+              break;
+            default:
+              break;
+          }
+      },
+    })
   },
 
   /**
@@ -28,6 +82,12 @@ Page({
         var arrayRes = [];
         for (var i = 0; i <= jsonRes.length - 2; i++) {
           arrayRes.push(JSON.parse(jsonRes[i]));
+        }
+        if(jsonRes[jsonRes.length-1].trim() === "isJudge")
+        {
+          that.setData({
+            judge: true
+          });
         }
         if(res.data != ""){
           that.setData({
