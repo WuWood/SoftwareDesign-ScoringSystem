@@ -19,7 +19,7 @@ import java.util.Date;
 public class CreateContest extends HttpServlet {
     private static final long serialVersionUID = 1L;
     // JDBC 驱动名及数据库 URL
-    static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";  
+    static final String JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";  
     static final String DB_URL = "jdbc:mysql://localhost:3306/bearcome?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=GMT%2B8";
     
     // 数据库的用户名与密码，需要根据自己的设置

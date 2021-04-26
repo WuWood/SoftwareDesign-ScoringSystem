@@ -19,8 +19,8 @@ import java.util.Date;
 public class ExamineJudges extends HttpServlet {
     private static final long serialVersionUID = 1L;
     // JDBC 驱动名及数据库 URL
-    static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";  
-    static final String DB_URL = "jdbc:mysql://localhost:3306/bearcome?useUnicode=true&characterEncoding=UTF-8&userSSL=false&serverTimezone=GMT%2B8";
+    static final String JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";  
+    static final String DB_URL = "jdbc:mysql://localhost:3306/bearcome?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=GMT%2B8";
     
     // 数据库的用户名与密码，需要根据自己的设置
     static final String USER = "root";
@@ -64,7 +64,7 @@ public class ExamineJudges extends HttpServlet {
                 HttpSession session = request.getSession();
                 if(action.equals("show")) //显示申请信息
                 {
-                    if(Integer.parseInt(session.getAttribute("level").toString()) == 3)
+                    if(Integer.parseInt(session.getAttribute("level").toString()) >= 2)
                     {
                         if(type == 2)
                         {
@@ -90,7 +90,7 @@ public class ExamineJudges extends HttpServlet {
                                 }
                             }
                         }
-                        else
+                        else if(type == 1)
                         {
                             sql = "SELECT * from examine where type=1;";
                             pstmt = conn.prepareStatement(sql);
@@ -129,7 +129,7 @@ public class ExamineJudges extends HttpServlet {
                                         "\"};");
                                     }                
                                 }
-                                else
+                                else if(type == 1)
                                 {
                                     out.println("{\"index\":\"" + index + 
                                     "\",\"userid\":\"" + userid +
@@ -156,7 +156,7 @@ public class ExamineJudges extends HttpServlet {
                             pstmt.setInt(2,type);
                             pstmt.setInt(3,id);
                         }
-                        else
+                        else if(type == 1)
                         {
                             sql = "SELECT * from examine where userid=? and type=?";
                             pstmt = conn.prepareStatement(sql);
@@ -175,6 +175,8 @@ public class ExamineJudges extends HttpServlet {
                                 pstmt.setInt(3,2);
                                 pstmt.setInt(4,id);
                                 pstmt.executeUpdate();
+
+                                out.println(1); //提交成功
                             }
                             else if(type == 1 && level == 1)
                             {
@@ -184,16 +186,17 @@ public class ExamineJudges extends HttpServlet {
                                 pstmt.setString(2,description);
                                 pstmt.setInt(3,1);
                                 pstmt.executeUpdate();
+
+                                out.println(1); //提交成功
                             }
                             else out.println(5); //错误提交
-                            out.println(1); //提交成功
                         }
                         else out.println(2); //已经提交
                     }
                 }
                 else if(action.equals("accept")) //审核申请
                 {
-                    if(Integer.parseInt(session.getAttribute("level").toString()) == 3)
+                    if(Integer.parseInt(session.getAttribute("level").toString()) >= 2)
                     {
                         index = Integer.parseInt(request.getParameter("index"));
                         sql = "SELECT * FROM examine where index1=? and type=?";

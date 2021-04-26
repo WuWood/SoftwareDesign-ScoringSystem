@@ -1,8 +1,9 @@
 // pages/examine/request/request.js
+const app = getApp();
 Page({
-
   formSubmit: function(e)
   {
+    app.Check();
     var description = e.detail.value.textarea;
     var that = this;
     if(description != "")

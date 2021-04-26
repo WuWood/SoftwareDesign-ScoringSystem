@@ -50,12 +50,12 @@ App({
       {
         wx.showToast({
           title: '缺少关键cookie，请重新登录', //弹框内容
-          icon: 'error',  //弹框模式
+          icon: 'none',  //弹框模式
           duration: 2000    //弹框显示时间
         });
         setTimeout(function () {
-          wx.navigateTo({
-            url: '../index/index',
+          wx.reLaunch({
+            url: '/pages/index/index',
           })
         }, 1000);
       }

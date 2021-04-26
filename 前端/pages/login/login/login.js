@@ -71,7 +71,8 @@ Page({
   /*传统登录事件*/
   create_login: function (e) {
     
-    console.log(e.detail.value);
+    console.log(e.detail.value)
+    wx.setStorageSync('username', e.detail.value["username"]); // 保存username到Storage
 
     // 发起传统登录请求
     wx.request({
@@ -90,6 +91,9 @@ Page({
   /*返回数据处理事件*/
   getResult: function (res) {
 
+    console.log("......Successful Request......");
+    console.log(res.data);
+    
     // Cookies
     if (res && res.header && res.header['Set-Cookie']) {
       wx.setStorageSync('JSESSIONID', res.header['Set-Cookie']); // 保存Cookie到Storage
@@ -105,18 +109,17 @@ Page({
     if (res.data == "1") {
       wx.showToast({
         title: "登录成功",
-        duration: 2000
+        duration: 1000
       })
       setTimeout(function () {
-        wx.navigateTo({
-          url: '../../show/show',
+        wx.reLaunch({
+          url: "/pages/index/index" // 关闭所有页面并打开主页
         })
+
+        // wx.navigateTo({
+        //   url: '../../show/show',
+        // })
       }, 1000)
-      /*setTimeout(function () {
-        wx.navigateBack({
-          delta: 2 // 返回上一页再返回上一页（返回到主页）
-        })
-      }, 1000)*/
     }
     else if(res.data == "2") {
       wx.showToast({

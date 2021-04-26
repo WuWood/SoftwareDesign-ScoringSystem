@@ -1,5 +1,6 @@
 // pages/create/create.js
 var util = require('../../utils/util.js');
+const app = getApp();
 const date = new Date();
 const years = [];
 const months = [];
@@ -63,6 +64,7 @@ Page({
 
   formSubmit: function(e)
   {
+    app.Check();
     var name = e.detail.value.name, desc = e.detail.value.desc, max = e.detail.value.max;
     var starttime = this.data.starttime, endtime = this.data.endtime;
     if(desc != "" && name != "" && max != "" && new Date(starttime) < new Date(endtime))
