@@ -8,6 +8,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.*;
@@ -65,7 +66,7 @@ public class LoginServlet2 extends HttpServlet {
             String nickname = request.getParameter("nickname");
             String code = request.getParameter("code");
             String username = nickname;
-
+            System.out.print(request.getParameter("nickname"));
             //用code换取openID
             String open = new LoginServlet2().open(appId,appSecret,code);
 
@@ -94,15 +95,15 @@ public class LoginServlet2 extends HttpServlet {
                     pstmt.setString(4,username);
                     int updateRows = pstmt.executeUpdate();
                     if(updateRows > 0){
-                        String SelectIdSql = "select userid from users where nickname=?;";
+                        String SelectIdSql = "select userid,level from users where nickname=?;";
                         pstmt = conn.prepareStatement(SelectIdSql);
                         pstmt.setString(1,nickname);
                         ResultSet SelectIdRs = pstmt.executeQuery();
                         while (SelectIdRs.next())
                         {
                             request.getSession().setAttribute("userid", SelectIdRs.getString("userid"));
+                            request.getSession().setAttribute("level", SelectIdRs.getString("level"));
                         }
-                        request.getSession().setAttribute("level", 1);
                         out.write("3"); //3代表注册成功
                         //完成后关闭
                         SelectIdRs.close();
@@ -112,16 +113,26 @@ public class LoginServlet2 extends HttpServlet {
                 }
                 else
                 {
-                    String SelectIdSql = "select userid from users where nickname=?;";
+                    String SelectIdSql = "select userid,level from users where nickname=?;";
                     pstmt = conn.prepareStatement(SelectIdSql);
                     pstmt.setString(1,nickname);
                     ResultSet SelectIdRs = pstmt.executeQuery();
                     while (SelectIdRs.next())
                     {
                         request.getSession().setAttribute("userid", SelectIdRs.getString("userid"));
+                        request.getSession().setAttribute("level", SelectIdRs.getString("level"));
                     }
-                    request.getSession().setAttribute("level", 1);
+
                     out.write("1"); //1代表登录成功
+                    if(SelectIdRs.getString("level").equals("3"))
+                    {
+                        out.write("9");//为管理员
+                    }
+                    else
+                    {
+                        out.write("8");//不为管理员
+                    }
+                    SelectIdRs.close();
                 }
                 rs.close();
             }
@@ -191,9 +202,18 @@ public class LoginServlet2 extends HttpServlet {
                 while(rs.next()) {
                     // 通过字段检索
                     if (rs.getString("password").equals(code)) {
-                        request.getSession().setAttribute("userid", rs.getString("userid"));
-                        request.getSession().setAttribute("level", rs.getString("level"));
+                        HttpSession session = request.getSession();
+                        session.setAttribute("userid", rs.getString("userid"));
+                        session.setAttribute("level", rs.getString("level"));
                         out.write("1");
+                        if(rs.getString("level").equals("3"))
+                        {
+                            out.write("9");//为管理员
+                        }
+                        else
+                        {
+                            out.write("8");//不为管理员
+                        }
                         IsLogin=true;
                         break;
                     }

@@ -11,13 +11,13 @@ import java.sql.*;
 @WebServlet("/LockJudges")
 public class LockJudges extends HttpServlet {
     private static final long serialVersionUID = 1L;
-    // JDBC Çı¶¯Ãû¼°Êı¾İ¿â URL
+    // JDBC é©±åŠ¨ååŠæ•°æ®åº“ URL
     static final String JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";
     static final String DB_URL = "jdbc:mysql:///bearcome?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai&useSSL=false";
 
-    // Êı¾İ¿âµÄÓÃ»§ÃûÓëÃÜÂë£¬ĞèÒª¸ù¾İ×Ô¼ºµÄÉèÖÃ
+    // æ•°æ®åº“çš„ç”¨æˆ·åä¸å¯†ç ï¼Œéœ€è¦æ ¹æ®è‡ªå·±çš„è®¾ç½®
     static final String USER = "root";
-    static final String PASS = "111";
+    static final String PASS = "";
 
 
 
@@ -25,49 +25,38 @@ public class LockJudges extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         Connection conn = null;
         PreparedStatement pstmt = null;
-        // ÉèÖÃÏìÓ¦ÄÚÈİÀàĞÍ
+        // è®¾ç½®å“åº”å†…å®¹ç±»å‹
         response.setContentType("text/html;charset=utf-8");
         PrintWriter out = response.getWriter();
         try {
-            // ×¢²á JDBC Çı¶¯Æ÷
+            // æ³¨å†Œ JDBC é©±åŠ¨å™¨
             Class.forName(JDBC_DRIVER);
-            // ´ò¿ªÒ»¸öÁ¬½Ó
+            // æ‰“å¼€ä¸€ä¸ªè¿æ¥
             conn = DriverManager.getConnection(DB_URL, USER, PASS);
 
-            //»ñÈ¡session
+            //è·å–session
             HttpSession session = request.getSession();
-            int level = (int) session.getAttribute("level");
-            int userid = (int) session.getAttribute(" userid");
+            int level = Integer.parseInt(session.getAttribute("level").toString());
+            int userid = Integer.parseInt(session.getAttribute("userid").toString());
+
             String ContestName = request.getParameter("ContestName");
             String Lock = request.getParameter("Lock");
             String[] SplitContest = request.getParameter("ContestName").split("t");
 
-            out.println(ContestName);
-
-
-            //ÅĞ¶Ï´´½¨ÕßµÄid
+            //åˆ¤æ–­åˆ›å»ºè€…çš„id
             String creatorids;
             creatorids = "SELECT creatorid FROM contest where id=?";
             pstmt = conn.prepareStatement(creatorids);
             pstmt.setInt(1, Integer.parseInt(SplitContest[2]));
-            ResultSet rs = pstmt.executeQuery();
-            while (rs.next())
+            ResultSet Creaters = pstmt.executeQuery();
+            while (Creaters.next())
             {
-                String creatorid = rs.getString("creatorid");
-
-
-
-            if (userid==Integer.parseInt(creatorid) || level == 3) {
-
-                //            Ìí¼Óid
-                String Sql;
-                Sql = "SELECT * FROM contest where id=?";
-                pstmt = conn.prepareStatement(Sql);
-                pstmt.setInt(1, Integer.parseInt(SplitContest[2]));
-
-
+                String[] creatorid2 = Creaters.getString("creatorid").split(",");
+                String creatorid = creatorid2[0];
+            if (userid==Integer.parseInt(creatorid) || level == 3)
+            {
                 if (Lock.equals("jLock")) {
-                    // Ö´ĞĞ SQL ²éÑ¯
+                    // æ‰§è¡Œ SQL æŸ¥è¯¢
                     String sql;
                     sql = "UPDATE contest set jLock=? where id=?;";
                     pstmt = conn.prepareStatement(sql);
@@ -75,21 +64,20 @@ public class LockJudges extends HttpServlet {
                     pstmt.setInt(2, Integer.parseInt(SplitContest[2]));
                     int updateRows = pstmt.executeUpdate();
                     if (updateRows > 0) {
-                        out.print("1");
+                        out.write("1");//jLocké”å®šæˆåŠŸ
                     } else {
-                        out.print("2");
+                        out.write("2");//jLocké”å®šå¤±è´¥
                     }
-
-                    // Í¨¹ı×Ö¶Î¼ìË÷
-
-
-                    //                  ÔöÌíÆÀÎ¯µÄid
+                    String Sql = "SELECT * FROM contest where id=?";
+                    pstmt = conn.prepareStatement(Sql);
+                    pstmt.setInt(1, Integer.parseInt(SplitContest[2]));
+                    ResultSet rs = pstmt.executeQuery();
+                    //                  å¢æ·»è¯„å§”çš„id
                     while (rs.next()) {
                         String jLock = rs.getString("jLock");
                         String judgeid = rs.getString("judgeid");
                         int a = Integer.parseInt(jLock);
                         if (a == 1) {
-
                             String[] tokens = judgeid.split(",");
                             String addsql;
                             addsql = "INSERT INTO " + ContestName + "(userid) VALUES(?)";
@@ -97,21 +85,15 @@ public class LockJudges extends HttpServlet {
                             for (int i = 0; i < tokens.length; i++) {
                                 pstmt.setInt(1, Integer.parseInt(tokens[i]));
                                 int row = pstmt.executeUpdate();
-                                if (row > 0) {
-                                    out.print("3");
-                                } else {
-                                    out.print("4");
-                                }
+                                if (row > 0) {}
                             }
                         }
 
                     }
                     rs.close();
-
-
                 }
                 if (Lock.equals("cLock")) {
-                    // Ö´ĞĞ SQL ²éÑ¯
+                    // æ‰§è¡Œ SQL æŸ¥è¯¢
                     String sql;
                     sql = "UPDATE contest set cLock=? where id=?;";
                     pstmt = conn.prepareStatement(sql);
@@ -119,54 +101,49 @@ public class LockJudges extends HttpServlet {
                     pstmt.setInt(2, Integer.parseInt(SplitContest[2]));
                     int updateRows = pstmt.executeUpdate();
                     if (updateRows > 0) {
-                        out.print("1");
+                        out.write("3");//cLocké”å®šæˆåŠŸ
                     } else {
-                        out.print("2");
+                        out.write("4");//cLocké”å®šå¤±è´¥
                     }
-
-
-                    // ÔöÌí²ÎÈüÕßid
-
-                    while (rs.next()) {
-                        String cLock = rs.getString("cLock");
-                        String userids = rs.getString("userid");
+                    String Sql = "SELECT * FROM contest where id=?";
+                    pstmt = conn.prepareStatement(Sql);
+                    pstmt.setInt(1, Integer.parseInt(SplitContest[2]));
+                    ResultSet crs = pstmt.executeQuery();
+                    // å¢æ·»å‚èµ›è€…id
+                    while (crs.next()) {
+                        String cLock = crs.getString("cLock");
+                        String userids = crs.getString("userid");
                         int c = Integer.parseInt(cLock);
                         if (c == 1) {
                             String[] token = userids.split(",");
                             String ac;
                             for (int i = 0; i < token.length; i++) {
                                 String d = token[i];
-                                ac = "alter table " + ContestName + " add column`" + d + "` varchar(30)";
+                                ac = "alter table " + ContestName + " add column `" + d + "` varchar(30)";
                                 pstmt = conn.prepareStatement(ac);
                                 int row = pstmt.executeUpdate();
-                                if (row == 0) {
-                                    out.print("3");
-                                } else {
-                                    out.print("4");
-                                }
+                                if (row == 0) {}
                             }
-
                         }
                     }
-                    rs.close();
-
+                    crs.close();
                 }
             }
         }
 
 
-
+            Creaters.close();
             pstmt.close();
             conn.close();
         } catch(SQLException se) {
-            // ´¦Àí JDBC ´íÎó
+            // å¤„ç† JDBC é”™è¯¯
 
             se.printStackTrace();
         } catch(Exception e) {
-            // ´¦Àí Class.forName ´íÎó
+            // å¤„ç† Class.forName é”™è¯¯
             e.printStackTrace();
         }finally{
-            // ×îºóÊÇÓÃÓÚ¹Ø±Õ×ÊÔ´µÄ¿é
+            // æœ€åæ˜¯ç”¨äºå…³é—­èµ„æºçš„å—
             try{
                 if(pstmt!=null)
                     pstmt.close();
