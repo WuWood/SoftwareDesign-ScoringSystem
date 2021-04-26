@@ -4,48 +4,29 @@ const app = getApp()
 const domain = app.globalData.domain;
 
 Page({
-
-  // 获取选手列表
-  GetUserList: function() {
-    app.Check()
-
-    wx.request({
-      url: domain + "/QueryScore",
-      data:{
-        "ContestId": wx.getStorageSync('ContestId'), //从Storage读取ContestId
-      },
-      method: 'POST',
-      header: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-        "Cookie": wx.getStorageSync('JSESSIONID')
-      },
-      success: function (res) {
-        console.log("......Successful Request......");
-        console.log(res.data);
-
-        wx.setStorageSync('userList', res.data);
-      },
-    })
-
-  },
-
   /**
    * 页面的初始数据
    */
   data: {
     userList: [],
-    ContestName: wx.getStorageSync('ContestName'), //从Storage读取ContestName
-    ContestId: wx.getStorageSync('ContestId'), //从Storage读取ContestId
+    ContestId: "",
+    ContestName: ""
   },
 
   /**
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
-    this.GetUserList();
+    app.Check()
+
+    var ContestId = options.ContestId; // 接收ContestId
+    var ContestName = options.ContestName; //接收ContestName
     this.setData({
-      userList: wx.getStorageSync('userList')
+      ContestId: ContestId,
+      ContestName: ContestName
     })
+
+    this.GetUserList(); //获取选手列表
   },
 
   /**
@@ -98,7 +79,32 @@ Page({
   },
 
 
-  /*提交评分*/
+  /*获取选手列表*/
+  GetUserList: function() {
+    var that = this;
+    
+    wx.request({
+      url: domain + "/QueryScore",
+      data:{
+        "ContestId": ContestId,
+      },
+      method: 'POST',
+      header: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        "Cookie": wx.getStorageSync('JSESSIONID')
+      },
+      success: function (res) {
+        console.log("......Successful Request......");
+        console.log(res.data);
+
+        that.setData({
+          userList: res.data
+        })
+      },
+    })
+  },
+
+  /*按钮事件 - 提交评分*/
   SubmitScore: function(e) {
 
     console.log(e.detail.value);
@@ -114,6 +120,27 @@ Page({
       success: function (res) {
         console.log("......Successful Request......");
         console.log(res.data);
+
+        // 页面交互逻辑
+        if (res.data == "1" || res.data == "135") {
+          wx.showToast({
+            title: "评分成功",
+            duration: 1000
+          })
+          setTimeout(function () {
+            wx.navigateBack({
+              delta: 1 //返回上一页
+            })
+          }, 1000)
+        }
+        else {
+          wx.showToast({
+            title: "评分失败",
+            icon: 'none',
+            duration: 3000
+          })
+        }
+
       },
     })
 
