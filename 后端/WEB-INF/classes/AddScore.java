@@ -23,7 +23,7 @@ public class AddScore extends HttpServlet{
 
     // 数据库的用户名与密码，需要根据自己的设置
     static final String USER = "root";
-    static final String PASS = "qertyiop1a";
+    static final String PASS = "";
 
     public  String getRequestPayload(HttpServletRequest req) {
         StringBuilder sb = new StringBuilder();
@@ -40,6 +40,7 @@ public class AddScore extends HttpServlet{
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         Connection conn = null;
         PreparedStatement pstmt = null;
