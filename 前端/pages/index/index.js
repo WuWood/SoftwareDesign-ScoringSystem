@@ -140,14 +140,14 @@ Page({
   },
 
   /*按钮事件 - 打开评委权限审核页*/
-  NavToCreate: function () {
+  NavToAccept: function () {
     wx.navigateTo({
       url: "/pages/examine/accept/accept",
     })
   },
 
   /*按钮事件 - 打开管理比赛页*/
-  NavToCreate: function () {
+  NavToPersonal: function () {
     wx.navigateTo({
       url: "/pages/personal/personal",
     })
