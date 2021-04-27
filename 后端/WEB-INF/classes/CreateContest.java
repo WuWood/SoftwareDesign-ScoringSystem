@@ -53,6 +53,7 @@ public class CreateContest extends HttpServlet {
             HttpSession session = request.getSession();
             int level = Integer.parseInt(session.getAttribute("level").toString());
             int userid = Integer.parseInt(session.getAttribute("userid").toString());
+            String partake2 = null;
             if(level >= 2)
             {
                 String name = request.getParameter("name");
@@ -108,7 +109,14 @@ public class CreateContest extends HttpServlet {
                                 while(rs.next())
                                 {
                                     String partake = rs.getString("createpartake");
-                                    String partake2 = partake + id + ",";
+                                    if(partake == null)
+                                    {
+                                        partake2 = id + ",";
+                                    }
+                                    else 
+                                    {
+                                        partake2 = partake + id + ",";
+                                    }
                                     sql = "UPDATE judge set createpartake=? where userid="+Integer.toString(userid);
                                     pstmt = conn.prepareStatement(sql);
                                     pstmt.setString(1, partake2);
